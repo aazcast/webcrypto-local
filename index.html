@@ -15,6 +15,18 @@
 </head>
 <body>
 	<div id="root"></div>
-	<script type="text/javascript" src="/main.js"></script>
+	<script>
+		// Build for gh-pages
+        var loc = document.querySelectorAll('body')[0];
+        var script = document.createElement('script');
+		var href = window.location.href;
+
+		if (href.indexOf('github.io') !== -1) {
+          script.src = './main.js';
+		} else {
+          script.src = '/main.js';
+		}
+        loc.appendChild(script);
+	</script>
 </body>
 </html>
