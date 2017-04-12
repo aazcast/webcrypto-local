@@ -3323,6 +3323,7 @@ var Client = (function (_super) {
                         resolve(json);
                     }
                     else {
+                        window.xmlHttp = xmlHttp;
                         reject(new Error("Cannot GET response"));
                     }
                 }
