@@ -745,11 +745,10 @@ var ArrayBufferConverter = (function () {
     ArrayBufferConverter.get = function (value) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2, value.buffer];
+                return [2, new Uint8Array(value).buffer];
             });
         });
     };
-    
     return ArrayBufferConverter;
 }());
 function ProtobufElement(params) {
@@ -866,20 +865,20 @@ var ObjectProto = (function () {
     };
     ObjectProto.prototype.importProto = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var thisStatic, that, scheme, raw, _a, _b, _i, key, item, schemeValues, setValue, _c, schemeValues_1, schemeValue, parser;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var thisStatic, that, scheme, raw, _a, _b, _i, key, item, schemeValues, _c, schemeValues_1, schemeValue, _d, _e, _f, _g;
+            return __generator(this, function (_h) {
+                switch (_h.label) {
                     case 0:
                         thisStatic = this.constructor;
                         that = this;
                         if (!(data instanceof ObjectProto)) return [3, 2];
                         return [4, data.exportProto()];
                     case 1:
-                        raw = _d.sent();
+                        raw = _h.sent();
                         return [3, 3];
                     case 2:
                         raw = data;
-                        _d.label = 3;
+                        _h.label = 3;
                     case 3:
                         try {
                             scheme = thisStatic.protobuf.decode(new Uint8Array(raw)).toObject();
@@ -891,16 +890,15 @@ var ObjectProto = (function () {
                         for (_b in thisStatic.items)
                             _a.push(_b);
                         _i = 0;
-                        _d.label = 4;
+                        _h.label = 4;
                     case 4:
-                        if (!(_i < _a.length)) return [3, 17];
+                        if (!(_i < _a.length)) return [3, 11];
                         key = _a[_i];
                         item = thisStatic.items[key];
                         schemeValues = scheme[item.name];
                         if (ArrayBuffer.isView(schemeValues)) {
                             schemeValues = new Uint8Array(schemeValues);
                         }
-                        setValue = void 0;
                         if (!Array.isArray(schemeValues)) {
                             if (item.repeated) {
                                 that[key] = schemeValues = [];
@@ -909,58 +907,34 @@ var ObjectProto = (function () {
                                 schemeValues = [schemeValues];
                             }
                         }
+                        if (item.repeated && !that[key]) {
+                            that[key] = [];
+                        }
                         _c = 0, schemeValues_1 = schemeValues;
-                        _d.label = 5;
+                        _h.label = 5;
                     case 5:
-                        if (!(_c < schemeValues_1.length)) return [3, 16];
+                        if (!(_c < schemeValues_1.length)) return [3, 10];
                         schemeValue = schemeValues_1[_c];
-                        if (!item.parser) return [3, 9];
-                        parser = item.parser;
-                        if (!(schemeValue && schemeValue.byteLength)) return [3, 7];
-                        return [4, parser.importProto(new Uint8Array(schemeValue).buffer)];
+                        if (!item.repeated) return [3, 7];
+                        _e = (_d = that[key]).push;
+                        return [4, this.importItem(item, schemeValue)];
                     case 6:
-                        setValue = _d.sent();
-                        return [3, 8];
+                        _e.apply(_d, [_h.sent()]);
+                        return [3, 9];
                     case 7:
-                        if (item.required) {
-                            throw new Error("Error: Parameter '" + item.name + "' is required in '" + thisStatic.localName + "' protobuf message.");
-                        }
-                        _d.label = 8;
-                    case 8: return [3, 14];
+                        _f = that;
+                        _g = key;
+                        return [4, this.importItem(item, schemeValue)];
+                    case 8:
+                        _f[_g] = _h.sent();
+                        _h.label = 9;
                     case 9:
-                        if (!item.converter) return [3, 13];
-                        if (!(schemeValue && schemeValue.byteLength)) return [3, 11];
-                        return [4, item.converter.get(schemeValue)];
-                    case 10:
-                        setValue = _d.sent();
-                        return [3, 12];
-                    case 11:
-                        if (item.required) {
-                            throw new Error("Error: Parameter '" + item.name + "' is required in '" + thisStatic.localName + "' protobuf message.");
-                        }
-                        _d.label = 12;
-                    case 12: return [3, 14];
-                    case 13:
-                        setValue = schemeValue;
-                        _d.label = 14;
-                    case 14:
-                        if (item.repeated) {
-                            if (!that[key]) {
-                                that[key] = [];
-                            }
-                            that[key].push(setValue);
-                        }
-                        else {
-                            that[key] = setValue;
-                        }
-                        _d.label = 15;
-                    case 15:
                         _c++;
                         return [3, 5];
-                    case 16:
+                    case 10:
                         _i++;
                         return [3, 4];
-                    case 17:
+                    case 11:
                         this.raw = raw;
                         return [2];
                 }
@@ -969,7 +943,7 @@ var ObjectProto = (function () {
     };
     ObjectProto.prototype.exportProto = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var thisStatic, that, protobuf, _a, _b, _i, key, item, values, _c, values_1, value, protobufValue, obj, raw;
+            var thisStatic, that, protobuf, _a, _b, _i, key, item, values, _c, values_1, value, protobufValue;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -985,7 +959,7 @@ var ObjectProto = (function () {
                         _i = 0;
                         _d.label = 1;
                     case 1:
-                        if (!(_i < _a.length)) return [3, 11];
+                        if (!(_i < _a.length)) return [3, 6];
                         key = _a[_i];
                         item = thisStatic.items[key];
                         values = that[key];
@@ -995,39 +969,11 @@ var ObjectProto = (function () {
                         _c = 0, values_1 = values;
                         _d.label = 2;
                     case 2:
-                        if (!(_c < values_1.length)) return [3, 10];
+                        if (!(_c < values_1.length)) return [3, 5];
                         value = values_1[_c];
-                        protobufValue = void 0;
-                        if (!item.parser) return [3, 4];
-                        obj = value;
-                        return [4, obj.exportProto()];
+                        return [4, this.exportItem(item, value)];
                     case 3:
-                        raw = _d.sent();
-                        if (item.required && !raw) {
-                            throw new Error("Error: Paramter '" + key + "' is required in '" + thisStatic.localName + "' protobuf message.");
-                        }
-                        if (raw) {
-                            protobufValue = new Uint8Array(raw);
-                        }
-                        return [3, 8];
-                    case 4:
-                        if (item.required && value === void 0) {
-                            throw new Error("Error: Paramter '" + key + "' is required in '" + thisStatic.localName + "' protobuf message.");
-                        }
-                        if (!item.converter) return [3, 7];
-                        if (!value) return [3, 6];
-                        return [4, item.converter.set(value)];
-                    case 5:
                         protobufValue = _d.sent();
-                        _d.label = 6;
-                    case 6: return [3, 8];
-                    case 7:
-                        if (value instanceof ArrayBuffer) {
-                            value = new Uint8Array(value);
-                        }
-                        protobufValue = value;
-                        _d.label = 8;
-                    case 8:
                         if (item.repeated) {
                             if (!protobuf[item.name]) {
                                 protobuf[item.name] = [];
@@ -1037,16 +983,98 @@ var ObjectProto = (function () {
                         else {
                             protobuf[item.name] = protobufValue;
                         }
-                        _d.label = 9;
-                    case 9:
+                        _d.label = 4;
+                    case 4:
                         _c++;
                         return [3, 2];
-                    case 10:
+                    case 5:
                         _i++;
                         return [3, 1];
-                    case 11:
+                    case 6:
                         this.raw = new Uint8Array(thisStatic.protobuf.encode(protobuf).finish()).buffer;
                         return [2, this.raw];
+                }
+            });
+        });
+    };
+    ObjectProto.prototype.exportItem = function (template, value) {
+        return __awaiter(this, void 0, void 0, function () {
+            var thisStatic, result, obj, raw;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        thisStatic = this.constructor;
+                        if (!template.parser) return [3, 2];
+                        obj = value;
+                        return [4, obj.exportProto()];
+                    case 1:
+                        raw = _a.sent();
+                        if (template.required && !raw) {
+                            throw new Error("Error: Paramter '" + template.name + "' is required in '" + thisStatic.localName + "' protobuf message.");
+                        }
+                        if (raw) {
+                            result = new Uint8Array(raw);
+                        }
+                        return [3, 6];
+                    case 2:
+                        if (template.required && value === void 0) {
+                            throw new Error("Error: Paramter '" + template.name + "' is required in '" + thisStatic.localName + "' protobuf message.");
+                        }
+                        if (!template.converter) return [3, 5];
+                        if (!value) return [3, 4];
+                        return [4, template.converter.set(value)];
+                    case 3:
+                        result = _a.sent();
+                        _a.label = 4;
+                    case 4: return [3, 6];
+                    case 5:
+                        if (value instanceof ArrayBuffer) {
+                            value = new Uint8Array(value);
+                        }
+                        result = value;
+                        _a.label = 6;
+                    case 6: return [2, result];
+                }
+            });
+        });
+    };
+    ObjectProto.prototype.importItem = function (template, value) {
+        return __awaiter(this, void 0, void 0, function () {
+            var thisStatic, result, parser;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        thisStatic = this.constructor;
+                        if (!template.parser) return [3, 4];
+                        parser = template.parser;
+                        if (!(value && value.byteLength)) return [3, 2];
+                        return [4, parser.importProto(new Uint8Array(value).buffer)];
+                    case 1:
+                        result = _a.sent();
+                        return [3, 3];
+                    case 2:
+                        if (template.required) {
+                            throw new Error("Error: Parameter '" + template.name + "' is required in '" + thisStatic.localName + "' protobuf message.");
+                        }
+                        _a.label = 3;
+                    case 3: return [3, 9];
+                    case 4:
+                        if (!template.converter) return [3, 8];
+                        if (!(value && value.byteLength)) return [3, 6];
+                        return [4, template.converter.get(value)];
+                    case 5:
+                        result = _a.sent();
+                        return [3, 7];
+                    case 6:
+                        if (template.required) {
+                            throw new Error("Error: Parameter '" + template.name + "' is required in '" + thisStatic.localName + "' protobuf message.");
+                        }
+                        _a.label = 7;
+                    case 7: return [3, 9];
+                    case 8:
+                        result = value;
+                        _a.label = 9;
+                    case 9: return [2, result];
                 }
             });
         });
@@ -2723,65 +2751,72 @@ var HexStringConverter = (function () {
     return HexStringConverter;
 }());
 
-var BaseProto = BaseProto_1 = (function (_super) {
+var BaseProto = (function (_super) {
     __extends(BaseProto, _super);
     function BaseProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    BaseProto_1 = BaseProto;
+    BaseProto.INDEX = 1;
+    __decorate([
+        ProtobufProperty({ id: BaseProto_1.INDEX++, type: "uint32", required: true, defaultValue: 1 })
+    ], BaseProto.prototype, "version", void 0);
+    BaseProto = BaseProto_1 = __decorate([
+        ProtobufElement({ name: "BaseMessage" })
+    ], BaseProto);
     return BaseProto;
+    var BaseProto_1;
 }(ObjectProto));
-BaseProto.INDEX = 1;
-__decorate([
-    ProtobufProperty({ id: BaseProto_1.INDEX++, type: "uint32", required: true, defaultValue: 1 })
-], BaseProto.prototype, "version", void 0);
-BaseProto = BaseProto_1 = __decorate([
-    ProtobufElement({ name: "BaseMessage" })
-], BaseProto);
-var ActionProto = ActionProto_1 = (function (_super) {
+var ActionProto = (function (_super) {
     __extends(ActionProto, _super);
     function ActionProto() {
         var _this = _super.call(this) || this;
         _this.action = _this.constructor.ACTION;
         return _this;
     }
+    ActionProto_1 = ActionProto;
+    ActionProto.INDEX = BaseProto.INDEX;
+    ActionProto.ACTION = "action";
+    __decorate([
+        ProtobufProperty({ id: ActionProto_1.INDEX++, type: "string", required: true })
+    ], ActionProto.prototype, "action", void 0);
+    __decorate([
+        ProtobufProperty({ id: ActionProto_1.INDEX++, type: "string", required: false })
+    ], ActionProto.prototype, "actionId", void 0);
+    ActionProto = ActionProto_1 = __decorate([
+        ProtobufElement({ name: "Action" })
+    ], ActionProto);
     return ActionProto;
+    var ActionProto_1;
 }(BaseProto));
-ActionProto.INDEX = BaseProto.INDEX;
-ActionProto.ACTION = "action";
-__decorate([
-    ProtobufProperty({ id: ActionProto_1.INDEX++, type: "string", required: true })
-], ActionProto.prototype, "action", void 0);
-__decorate([
-    ProtobufProperty({ id: ActionProto_1.INDEX++, type: "string", required: false })
-], ActionProto.prototype, "actionId", void 0);
-ActionProto = ActionProto_1 = __decorate([
-    ProtobufElement({ name: "Action" })
-], ActionProto);
-var BaseAlgorithmProto = BaseAlgorithmProto_1 = (function (_super) {
+var BaseAlgorithmProto = (function (_super) {
     __extends(BaseAlgorithmProto, _super);
     function BaseAlgorithmProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    BaseAlgorithmProto_1 = BaseAlgorithmProto;
     BaseAlgorithmProto.prototype.toAlgorithm = function () {
         return { name: this.name };
     };
     BaseAlgorithmProto.prototype.fromAlgorithm = function (alg) {
         this.name = alg.name;
     };
+    BaseAlgorithmProto.INDEX = BaseProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: BaseAlgorithmProto_1.INDEX++, type: "string", required: true })
+    ], BaseAlgorithmProto.prototype, "name", void 0);
+    BaseAlgorithmProto = BaseAlgorithmProto_1 = __decorate([
+        ProtobufElement({ name: "BaseAlgorithm" })
+    ], BaseAlgorithmProto);
     return BaseAlgorithmProto;
+    var BaseAlgorithmProto_1;
 }(BaseProto));
-BaseAlgorithmProto.INDEX = BaseProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: BaseAlgorithmProto_1.INDEX++, type: "string", required: true })
-], BaseAlgorithmProto.prototype, "name", void 0);
-BaseAlgorithmProto = BaseAlgorithmProto_1 = __decorate([
-    ProtobufElement({ name: "BaseAlgorithm" })
-], BaseAlgorithmProto);
-var AlgorithmProto = AlgorithmProto_1 = (function (_super) {
+var AlgorithmProto = (function (_super) {
     __extends(AlgorithmProto, _super);
     function AlgorithmProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    AlgorithmProto_1 = AlgorithmProto;
     AlgorithmProto.prototype.toAlgorithm = function () {
         var res = {};
         var thisStatic = this.constructor;
@@ -2826,97 +2861,104 @@ var AlgorithmProto = AlgorithmProto_1 = (function (_super) {
             }
         }
     };
+    AlgorithmProto.INDEX = BaseAlgorithmProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "bytes", parser: BaseAlgorithmProto })
+    ], AlgorithmProto.prototype, "hash", void 0);
+    __decorate([
+        ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "bytes" })
+    ], AlgorithmProto.prototype, "publicExponent", void 0);
+    __decorate([
+        ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "uint32" })
+    ], AlgorithmProto.prototype, "modulusLength", void 0);
+    __decorate([
+        ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "uint32" })
+    ], AlgorithmProto.prototype, "saltLength", void 0);
+    __decorate([
+        ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "bytes" })
+    ], AlgorithmProto.prototype, "label", void 0);
+    __decorate([
+        ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "string" })
+    ], AlgorithmProto.prototype, "namedCurve", void 0);
+    __decorate([
+        ProtobufProperty({ id: AlgorithmProto_1.INDEX++, converter: ArrayBufferConverter })
+    ], AlgorithmProto.prototype, "public", void 0);
+    __decorate([
+        ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "uint32" })
+    ], AlgorithmProto.prototype, "length", void 0);
+    __decorate([
+        ProtobufProperty({ id: AlgorithmProto_1.INDEX++ })
+    ], AlgorithmProto.prototype, "iv", void 0);
+    AlgorithmProto = AlgorithmProto_1 = __decorate([
+        ProtobufElement({ name: "Algorithm" })
+    ], AlgorithmProto);
     return AlgorithmProto;
+    var AlgorithmProto_1;
 }(BaseAlgorithmProto));
-AlgorithmProto.INDEX = BaseAlgorithmProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "bytes", parser: BaseAlgorithmProto })
-], AlgorithmProto.prototype, "hash", void 0);
-__decorate([
-    ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "bytes" })
-], AlgorithmProto.prototype, "publicExponent", void 0);
-__decorate([
-    ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "uint32" })
-], AlgorithmProto.prototype, "modulusLength", void 0);
-__decorate([
-    ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "uint32" })
-], AlgorithmProto.prototype, "saltLength", void 0);
-__decorate([
-    ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "bytes" })
-], AlgorithmProto.prototype, "label", void 0);
-__decorate([
-    ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "string" })
-], AlgorithmProto.prototype, "namedCurve", void 0);
-__decorate([
-    ProtobufProperty({ id: AlgorithmProto_1.INDEX++, converter: ArrayBufferConverter })
-], AlgorithmProto.prototype, "public", void 0);
-__decorate([
-    ProtobufProperty({ id: AlgorithmProto_1.INDEX++, type: "uint32" })
-], AlgorithmProto.prototype, "length", void 0);
-__decorate([
-    ProtobufProperty({ id: AlgorithmProto_1.INDEX++ })
-], AlgorithmProto.prototype, "iv", void 0);
-AlgorithmProto = AlgorithmProto_1 = __decorate([
-    ProtobufElement({ name: "Algorithm" })
-], AlgorithmProto);
-var CryptoItemProto = CryptoItemProto_1 = (function (_super) {
+var CryptoItemProto = (function (_super) {
     __extends(CryptoItemProto, _super);
     function CryptoItemProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CryptoItemProto_1 = CryptoItemProto;
+    CryptoItemProto.INDEX = BaseProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: CryptoItemProto_1.INDEX++, type: "string", required: true })
+    ], CryptoItemProto.prototype, "providerID", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoItemProto_1.INDEX++, type: "bytes", required: true, converter: HexStringConverter })
+    ], CryptoItemProto.prototype, "id", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoItemProto_1.INDEX++, type: "string", required: true })
+    ], CryptoItemProto.prototype, "type", void 0);
+    CryptoItemProto = CryptoItemProto_1 = __decorate([
+        ProtobufElement({ name: "CryptoItem" })
+    ], CryptoItemProto);
     return CryptoItemProto;
+    var CryptoItemProto_1;
 }(BaseProto));
-CryptoItemProto.INDEX = BaseProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: CryptoItemProto_1.INDEX++, type: "string", required: true })
-], CryptoItemProto.prototype, "providerID", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoItemProto_1.INDEX++, type: "bytes", required: true, converter: HexStringConverter })
-], CryptoItemProto.prototype, "id", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoItemProto_1.INDEX++, type: "string", required: true })
-], CryptoItemProto.prototype, "type", void 0);
-CryptoItemProto = CryptoItemProto_1 = __decorate([
-    ProtobufElement({ name: "CryptoItem" })
-], CryptoItemProto);
-var CryptoKeyProto = CryptoKeyProto_1 = (function (_super) {
+var CryptoKeyProto = (function (_super) {
     __extends(CryptoKeyProto, _super);
     function CryptoKeyProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CryptoKeyProto_1 = CryptoKeyProto;
+    CryptoKeyProto.INDEX = CryptoItemProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: CryptoKeyProto_1.INDEX++, type: "bytes", required: true, parser: AlgorithmProto })
+    ], CryptoKeyProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoKeyProto_1.INDEX++, type: "bool" })
+    ], CryptoKeyProto.prototype, "extractable", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoKeyProto_1.INDEX++, type: "string", repeated: true })
+    ], CryptoKeyProto.prototype, "usages", void 0);
+    CryptoKeyProto = CryptoKeyProto_1 = __decorate([
+        ProtobufElement({ name: "CryptoKey" })
+    ], CryptoKeyProto);
     return CryptoKeyProto;
+    var CryptoKeyProto_1;
 }(CryptoItemProto));
-CryptoKeyProto.INDEX = CryptoItemProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: CryptoKeyProto_1.INDEX++, type: "bytes", required: true, parser: AlgorithmProto })
-], CryptoKeyProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoKeyProto_1.INDEX++, type: "bool" })
-], CryptoKeyProto.prototype, "extractable", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoKeyProto_1.INDEX++, type: "string", repeated: true })
-], CryptoKeyProto.prototype, "usages", void 0);
-CryptoKeyProto = CryptoKeyProto_1 = __decorate([
-    ProtobufElement({ name: "CryptoKey" })
-], CryptoKeyProto);
-var CryptoKeyPairProto = CryptoKeyPairProto_1 = (function (_super) {
+var CryptoKeyPairProto = (function (_super) {
     __extends(CryptoKeyPairProto, _super);
     function CryptoKeyPairProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CryptoKeyPairProto_1 = CryptoKeyPairProto;
+    CryptoKeyPairProto.INDEX = BaseProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: CryptoKeyPairProto_1.INDEX++, name: "privateKey", type: "bytes", parser: CryptoKeyProto })
+    ], CryptoKeyPairProto.prototype, "privateKey", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoKeyPairProto_1.INDEX++, name: "publicKey", type: "bytes", parser: CryptoKeyProto })
+    ], CryptoKeyPairProto.prototype, "publicKey", void 0);
+    CryptoKeyPairProto = CryptoKeyPairProto_1 = __decorate([
+        ProtobufElement({ name: "CryptoKeyPair" })
+    ], CryptoKeyPairProto);
     return CryptoKeyPairProto;
+    var CryptoKeyPairProto_1;
 }(BaseProto));
-CryptoKeyPairProto.INDEX = BaseProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: CryptoKeyPairProto_1.INDEX++, name: "privateKey", type: "bytes", parser: CryptoKeyProto })
-], CryptoKeyPairProto.prototype, "privateKey", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoKeyPairProto_1.INDEX++, name: "publicKey", type: "bytes", parser: CryptoKeyProto })
-], CryptoKeyPairProto.prototype, "publicKey", void 0);
-CryptoKeyPairProto = CryptoKeyPairProto_1 = __decorate([
-    ProtobufElement({ name: "CryptoKeyPair" })
-], CryptoKeyPairProto);
-var ResultProto = ResultProto_1 = (function (_super) {
+var ResultProto = (function (_super) {
     __extends(ResultProto, _super);
     function ResultProto(proto) {
         var _this = _super.call(this) || this;
@@ -2926,65 +2968,59 @@ var ResultProto = ResultProto_1 = (function (_super) {
         }
         return _this;
     }
+    ResultProto_1 = ResultProto;
+    ResultProto.INDEX = ActionProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: ResultProto_1.INDEX++, type: "bool", defaultValue: false })
+    ], ResultProto.prototype, "status", void 0);
+    __decorate([
+        ProtobufProperty({ id: ResultProto_1.INDEX++, type: "string", defaultValue: "" })
+    ], ResultProto.prototype, "error", void 0);
+    __decorate([
+        ProtobufProperty({ id: ResultProto_1.INDEX++, type: "bytes", converter: ArrayBufferConverter })
+    ], ResultProto.prototype, "data", void 0);
+    ResultProto = ResultProto_1 = __decorate([
+        ProtobufElement({ name: "Result" })
+    ], ResultProto);
     return ResultProto;
+    var ResultProto_1;
 }(ActionProto));
-ResultProto.INDEX = ActionProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: ResultProto_1.INDEX++, type: "bool", defaultValue: false })
-], ResultProto.prototype, "status", void 0);
-__decorate([
-    ProtobufProperty({ id: ResultProto_1.INDEX++, type: "string", defaultValue: "" })
-], ResultProto.prototype, "error", void 0);
-__decorate([
-    ProtobufProperty({ id: ResultProto_1.INDEX++, type: "bytes", converter: ArrayBufferConverter })
-], ResultProto.prototype, "data", void 0);
-ResultProto = ResultProto_1 = __decorate([
-    ProtobufElement({ name: "Result" })
-], ResultProto);
 var AuthRequestProto = (function (_super) {
     __extends(AuthRequestProto, _super);
     function AuthRequestProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    AuthRequestProto.INDEX = ActionProto.INDEX;
+    AuthRequestProto.ACTION = "auth";
+    AuthRequestProto = __decorate([
+        ProtobufElement({ name: "AuthRequest" })
+    ], AuthRequestProto);
     return AuthRequestProto;
 }(ActionProto));
-AuthRequestProto.INDEX = ActionProto.INDEX;
-AuthRequestProto.ACTION = "auth";
-AuthRequestProto = __decorate([
-    ProtobufElement({ name: "AuthRequest" })
-], AuthRequestProto);
 var ServerLoginActionProto = (function (_super) {
     __extends(ServerLoginActionProto, _super);
     function ServerLoginActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ServerLoginActionProto.INDEX = ActionProto.INDEX;
+    ServerLoginActionProto.ACTION = "server/login";
+    ServerLoginActionProto = __decorate([
+        ProtobufElement({})
+    ], ServerLoginActionProto);
     return ServerLoginActionProto;
 }(ActionProto));
-ServerLoginActionProto.INDEX = ActionProto.INDEX;
-ServerLoginActionProto.ACTION = "server/login";
-ServerLoginActionProto = __decorate([
-    ProtobufElement({})
-], ServerLoginActionProto);
 var ServerIsLoggedInActionProto = (function (_super) {
     __extends(ServerIsLoggedInActionProto, _super);
     function ServerIsLoggedInActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ServerIsLoggedInActionProto.INDEX = ActionProto.INDEX;
+    ServerIsLoggedInActionProto.ACTION = "server/isLoggedIn";
+    ServerIsLoggedInActionProto = __decorate([
+        ProtobufElement({})
+    ], ServerIsLoggedInActionProto);
     return ServerIsLoggedInActionProto;
 }(ActionProto));
-ServerIsLoggedInActionProto.INDEX = ActionProto.INDEX;
-ServerIsLoggedInActionProto.ACTION = "server/isLoggedIn";
-ServerIsLoggedInActionProto = __decorate([
-    ProtobufElement({})
-], ServerIsLoggedInActionProto);
-var BaseProto_1;
-var ActionProto_1;
-var BaseAlgorithmProto_1;
-var AlgorithmProto_1;
-var CryptoItemProto_1;
-var CryptoKeyProto_1;
-var CryptoKeyPairProto_1;
-var ResultProto_1;
 
 var subtle;
 if (typeof self === "undefined") {
@@ -3155,12 +3191,12 @@ var BrowserStorage = (function () {
             });
         });
     };
+    BrowserStorage.STORAGE_NAME = "webcrypto-remote";
+    BrowserStorage.IDENTITY_STORAGE = "identity";
+    BrowserStorage.SESSION_STORAGE = "sessions";
+    BrowserStorage.REMOTE_STORAGE = "remoteIdentity";
     return BrowserStorage;
 }());
-BrowserStorage.STORAGE_NAME = "webcrypto-remote";
-BrowserStorage.IDENTITY_STORAGE = "identity";
-BrowserStorage.SESSION_STORAGE = "sessions";
-BrowserStorage.REMOTE_STORAGE = "remoteIdentity";
 
 var ClientEvent = (function (_super) {
     __extends(ClientEvent, _super);
@@ -3468,7 +3504,7 @@ var Client = (function (_super) {
     return Client;
 }(EventEmitter));
 
-var ProviderCryptoProto = ProviderCryptoProto_1 = (function (_super) {
+var ProviderCryptoProto = (function (_super) {
     __extends(ProviderCryptoProto, _super);
     function ProviderCryptoProto(data) {
         var _this = _super.call(this) || this;
@@ -3477,87 +3513,93 @@ var ProviderCryptoProto = ProviderCryptoProto_1 = (function (_super) {
         }
         return _this;
     }
+    ProviderCryptoProto_1 = ProviderCryptoProto;
+    ProviderCryptoProto.INDEX = BaseProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, required: true, type: "string" })
+    ], ProviderCryptoProto.prototype, "id", void 0);
+    __decorate([
+        ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, required: true, type: "string" })
+    ], ProviderCryptoProto.prototype, "name", void 0);
+    __decorate([
+        ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, type: "bool", defaultValue: false })
+    ], ProviderCryptoProto.prototype, "readOnly", void 0);
+    __decorate([
+        ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, repeated: true, type: "string" })
+    ], ProviderCryptoProto.prototype, "algorithms", void 0);
+    __decorate([
+        ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, type: "bool", defaultValue: false })
+    ], ProviderCryptoProto.prototype, "isRemovable", void 0);
+    __decorate([
+        ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, type: "string" })
+    ], ProviderCryptoProto.prototype, "atr", void 0);
+    ProviderCryptoProto = ProviderCryptoProto_1 = __decorate([
+        ProtobufElement({})
+    ], ProviderCryptoProto);
     return ProviderCryptoProto;
+    var ProviderCryptoProto_1;
 }(BaseProto));
-ProviderCryptoProto.INDEX = BaseProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, required: true, type: "string" })
-], ProviderCryptoProto.prototype, "id", void 0);
-__decorate([
-    ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, required: true, type: "string" })
-], ProviderCryptoProto.prototype, "name", void 0);
-__decorate([
-    ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, type: "bool", defaultValue: false })
-], ProviderCryptoProto.prototype, "readOnly", void 0);
-__decorate([
-    ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, repeated: true, type: "string" })
-], ProviderCryptoProto.prototype, "algorithms", void 0);
-__decorate([
-    ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, type: "bool", defaultValue: false })
-], ProviderCryptoProto.prototype, "isRemovable", void 0);
-__decorate([
-    ProtobufProperty({ id: ProviderCryptoProto_1.INDEX++, type: "string" })
-], ProviderCryptoProto.prototype, "atr", void 0);
-ProviderCryptoProto = ProviderCryptoProto_1 = __decorate([
-    ProtobufElement({})
-], ProviderCryptoProto);
-var ProviderInfoProto = ProviderInfoProto_1 = (function (_super) {
+var ProviderInfoProto = (function (_super) {
     __extends(ProviderInfoProto, _super);
     function ProviderInfoProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ProviderInfoProto_1 = ProviderInfoProto;
+    ProviderInfoProto.INDEX = BaseProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: ProviderInfoProto_1.INDEX++, type: "string", required: true })
+    ], ProviderInfoProto.prototype, "name", void 0);
+    __decorate([
+        ProtobufProperty({ id: ProviderInfoProto_1.INDEX++, repeated: true, parser: ProviderCryptoProto })
+    ], ProviderInfoProto.prototype, "providers", void 0);
+    ProviderInfoProto = ProviderInfoProto_1 = __decorate([
+        ProtobufElement({})
+    ], ProviderInfoProto);
     return ProviderInfoProto;
+    var ProviderInfoProto_1;
 }(BaseProto));
-ProviderInfoProto.INDEX = BaseProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: ProviderInfoProto_1.INDEX++, type: "string", required: true })
-], ProviderInfoProto.prototype, "name", void 0);
-__decorate([
-    ProtobufProperty({ id: ProviderInfoProto_1.INDEX++, repeated: true, parser: ProviderCryptoProto })
-], ProviderInfoProto.prototype, "providers", void 0);
-ProviderInfoProto = ProviderInfoProto_1 = __decorate([
-    ProtobufElement({})
-], ProviderInfoProto);
 var ProviderInfoActionProto = (function (_super) {
     __extends(ProviderInfoActionProto, _super);
     function ProviderInfoActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ProviderInfoActionProto.INDEX = ActionProto.INDEX;
+    ProviderInfoActionProto.ACTION = "provider/action/info";
+    ProviderInfoActionProto = __decorate([
+        ProtobufElement({})
+    ], ProviderInfoActionProto);
     return ProviderInfoActionProto;
 }(ActionProto));
-ProviderInfoActionProto.INDEX = ActionProto.INDEX;
-ProviderInfoActionProto.ACTION = "provider/action/info";
-ProviderInfoActionProto = __decorate([
-    ProtobufElement({})
-], ProviderInfoActionProto);
-var ProviderGetCryptoActionProto = ProviderGetCryptoActionProto_1 = (function (_super) {
+var ProviderGetCryptoActionProto = (function (_super) {
     __extends(ProviderGetCryptoActionProto, _super);
     function ProviderGetCryptoActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ProviderGetCryptoActionProto_1 = ProviderGetCryptoActionProto;
+    ProviderGetCryptoActionProto.INDEX = ActionProto.INDEX;
+    ProviderGetCryptoActionProto.ACTION = "provider/action/getCrypto";
+    __decorate([
+        ProtobufProperty({ id: ProviderGetCryptoActionProto_1.INDEX++, required: true, type: "string" })
+    ], ProviderGetCryptoActionProto.prototype, "cryptoID", void 0);
+    ProviderGetCryptoActionProto = ProviderGetCryptoActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], ProviderGetCryptoActionProto);
     return ProviderGetCryptoActionProto;
+    var ProviderGetCryptoActionProto_1;
 }(ActionProto));
-ProviderGetCryptoActionProto.INDEX = ActionProto.INDEX;
-ProviderGetCryptoActionProto.ACTION = "provider/action/getCrypto";
-__decorate([
-    ProtobufProperty({ id: ProviderGetCryptoActionProto_1.INDEX++, required: true, type: "string" })
-], ProviderGetCryptoActionProto.prototype, "cryptoID", void 0);
-ProviderGetCryptoActionProto = ProviderGetCryptoActionProto_1 = __decorate([
-    ProtobufElement({})
-], ProviderGetCryptoActionProto);
 var ProviderAuthorizedEventProto = (function (_super) {
     __extends(ProviderAuthorizedEventProto, _super);
     function ProviderAuthorizedEventProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ProviderAuthorizedEventProto.INDEX = ActionProto.INDEX;
+    ProviderAuthorizedEventProto.ACTION = "provider/event/authorized";
+    ProviderAuthorizedEventProto = __decorate([
+        ProtobufElement({})
+    ], ProviderAuthorizedEventProto);
     return ProviderAuthorizedEventProto;
 }(ActionProto));
-ProviderAuthorizedEventProto.INDEX = ActionProto.INDEX;
-ProviderAuthorizedEventProto.ACTION = "provider/event/authorized";
-ProviderAuthorizedEventProto = __decorate([
-    ProtobufElement({})
-], ProviderAuthorizedEventProto);
-var ProviderTokenEventProto = ProviderTokenEventProto_1 = (function (_super) {
+var ProviderTokenEventProto = (function (_super) {
     __extends(ProviderTokenEventProto, _super);
     function ProviderTokenEventProto(data) {
         var _this = _super.call(this) || this;
@@ -3566,79 +3608,78 @@ var ProviderTokenEventProto = ProviderTokenEventProto_1 = (function (_super) {
         }
         return _this;
     }
+    ProviderTokenEventProto_1 = ProviderTokenEventProto;
+    ProviderTokenEventProto.INDEX = ActionProto.INDEX;
+    ProviderTokenEventProto.ACTION = "provider/event/token";
+    __decorate([
+        ProtobufProperty({ id: ProviderTokenEventProto_1.INDEX++, repeated: true, parser: ProviderCryptoProto })
+    ], ProviderTokenEventProto.prototype, "added", void 0);
+    __decorate([
+        ProtobufProperty({ id: ProviderTokenEventProto_1.INDEX++, repeated: true, parser: ProviderCryptoProto })
+    ], ProviderTokenEventProto.prototype, "removed", void 0);
+    __decorate([
+        ProtobufProperty({ id: ProviderTokenEventProto_1.INDEX++, type: "string" })
+    ], ProviderTokenEventProto.prototype, "error", void 0);
+    ProviderTokenEventProto = ProviderTokenEventProto_1 = __decorate([
+        ProtobufElement({ name: "ProviderTokenEvent" })
+    ], ProviderTokenEventProto);
     return ProviderTokenEventProto;
+    var ProviderTokenEventProto_1;
 }(ActionProto));
-ProviderTokenEventProto.INDEX = ActionProto.INDEX;
-ProviderTokenEventProto.ACTION = "provider/event/token";
-__decorate([
-    ProtobufProperty({ id: ProviderTokenEventProto_1.INDEX++, repeated: true, parser: ProviderCryptoProto })
-], ProviderTokenEventProto.prototype, "added", void 0);
-__decorate([
-    ProtobufProperty({ id: ProviderTokenEventProto_1.INDEX++, repeated: true, parser: ProviderCryptoProto })
-], ProviderTokenEventProto.prototype, "removed", void 0);
-__decorate([
-    ProtobufProperty({ id: ProviderTokenEventProto_1.INDEX++, type: "string" })
-], ProviderTokenEventProto.prototype, "error", void 0);
-ProviderTokenEventProto = ProviderTokenEventProto_1 = __decorate([
-    ProtobufElement({ name: "ProviderTokenEvent" })
-], ProviderTokenEventProto);
-var ProviderCryptoProto_1;
-var ProviderInfoProto_1;
-var ProviderGetCryptoActionProto_1;
-var ProviderTokenEventProto_1;
 
-var CryptoActionProto = CryptoActionProto_1 = (function (_super) {
+var CryptoActionProto = (function (_super) {
     __extends(CryptoActionProto, _super);
     function CryptoActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CryptoActionProto_1 = CryptoActionProto;
+    CryptoActionProto.INDEX = ActionProto.INDEX;
+    CryptoActionProto.ACTION = "crypto";
+    __decorate([
+        ProtobufProperty({ id: CryptoActionProto_1.INDEX++, required: true, type: "string" })
+    ], CryptoActionProto.prototype, "providerID", void 0);
+    CryptoActionProto = CryptoActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], CryptoActionProto);
     return CryptoActionProto;
+    var CryptoActionProto_1;
 }(ActionProto));
-CryptoActionProto.INDEX = ActionProto.INDEX;
-CryptoActionProto.ACTION = "crypto";
-__decorate([
-    ProtobufProperty({ id: CryptoActionProto_1.INDEX++, required: true, type: "string" })
-], CryptoActionProto.prototype, "providerID", void 0);
-CryptoActionProto = CryptoActionProto_1 = __decorate([
-    ProtobufElement({})
-], CryptoActionProto);
 var LoginActionProto = (function (_super) {
     __extends(LoginActionProto, _super);
     function LoginActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    LoginActionProto.INDEX = CryptoActionProto.INDEX;
+    LoginActionProto.ACTION = "crypto/login";
+    LoginActionProto = __decorate([
+        ProtobufElement({})
+    ], LoginActionProto);
     return LoginActionProto;
 }(CryptoActionProto));
-LoginActionProto.INDEX = CryptoActionProto.INDEX;
-LoginActionProto.ACTION = "crypto/login";
-LoginActionProto = __decorate([
-    ProtobufElement({})
-], LoginActionProto);
 var IsLoggedInActionProto = (function (_super) {
     __extends(IsLoggedInActionProto, _super);
     function IsLoggedInActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    IsLoggedInActionProto.INDEX = CryptoActionProto.INDEX;
+    IsLoggedInActionProto.ACTION = "crypto/isLoggedIn";
+    IsLoggedInActionProto = __decorate([
+        ProtobufElement({})
+    ], IsLoggedInActionProto);
     return IsLoggedInActionProto;
 }(CryptoActionProto));
-IsLoggedInActionProto.INDEX = CryptoActionProto.INDEX;
-IsLoggedInActionProto.ACTION = "crypto/isLoggedIn";
-IsLoggedInActionProto = __decorate([
-    ProtobufElement({})
-], IsLoggedInActionProto);
 var ResetActionProto = (function (_super) {
     __extends(ResetActionProto, _super);
     function ResetActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ResetActionProto.INDEX = CryptoActionProto.INDEX;
+    ResetActionProto.ACTION = "crypto/reset";
+    ResetActionProto = __decorate([
+        ProtobufElement({})
+    ], ResetActionProto);
     return ResetActionProto;
 }(CryptoActionProto));
-ResetActionProto.INDEX = CryptoActionProto.INDEX;
-ResetActionProto.ACTION = "crypto/reset";
-ResetActionProto = __decorate([
-    ProtobufElement({})
-], ResetActionProto);
-var CryptoActionProto_1;
 
 function printf(text) {
     var args = [];
@@ -5070,248 +5111,341 @@ var SubtleCrypto = (function () {
     return SubtleCrypto;
 }());
 
-var CryptoCertificateProto = CryptoCertificateProto_1 = (function (_super) {
+var CryptoCertificateProto = (function (_super) {
     __extends(CryptoCertificateProto, _super);
     function CryptoCertificateProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CryptoCertificateProto_1 = CryptoCertificateProto;
+    CryptoCertificateProto.INDEX = CryptoItemProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: CryptoCertificateProto_1.INDEX++, required: true, converter: HexStringConverter })
+    ], CryptoCertificateProto.prototype, "id", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoCertificateProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], CryptoCertificateProto.prototype, "publicKey", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoCertificateProto_1.INDEX++, required: true, type: "string" })
+    ], CryptoCertificateProto.prototype, "type", void 0);
+    CryptoCertificateProto = CryptoCertificateProto_1 = __decorate([
+        ProtobufElement({})
+    ], CryptoCertificateProto);
     return CryptoCertificateProto;
+    var CryptoCertificateProto_1;
 }(CryptoItemProto));
-CryptoCertificateProto.INDEX = CryptoItemProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: CryptoCertificateProto_1.INDEX++, required: true, converter: HexStringConverter })
-], CryptoCertificateProto.prototype, "id", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoCertificateProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], CryptoCertificateProto.prototype, "publicKey", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoCertificateProto_1.INDEX++, required: true, type: "string" })
-], CryptoCertificateProto.prototype, "type", void 0);
-CryptoCertificateProto = CryptoCertificateProto_1 = __decorate([
-    ProtobufElement({})
-], CryptoCertificateProto);
-var CryptoX509CertificateProto = CryptoX509CertificateProto_1 = (function (_super) {
+var CryptoX509CertificateProto = (function (_super) {
     __extends(CryptoX509CertificateProto, _super);
     function CryptoX509CertificateProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CryptoX509CertificateProto_1 = CryptoX509CertificateProto;
+    CryptoX509CertificateProto.INDEX = CryptoCertificateProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, converter: HexStringConverter })
+    ], CryptoX509CertificateProto.prototype, "serialNumber", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, type: "string" })
+    ], CryptoX509CertificateProto.prototype, "issuerName", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, type: "string" })
+    ], CryptoX509CertificateProto.prototype, "subjectName", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, converter: DateConverter$1 })
+    ], CryptoX509CertificateProto.prototype, "notBefore", void 0);
+    __decorate([
+        ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, converter: DateConverter$1 })
+    ], CryptoX509CertificateProto.prototype, "notAfter", void 0);
+    CryptoX509CertificateProto = CryptoX509CertificateProto_1 = __decorate([
+        ProtobufElement({})
+    ], CryptoX509CertificateProto);
     return CryptoX509CertificateProto;
+    var CryptoX509CertificateProto_1;
 }(CryptoCertificateProto));
-CryptoX509CertificateProto.INDEX = CryptoCertificateProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, converter: HexStringConverter })
-], CryptoX509CertificateProto.prototype, "serialNumber", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, type: "string" })
-], CryptoX509CertificateProto.prototype, "issuerName", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, type: "string" })
-], CryptoX509CertificateProto.prototype, "subjectName", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, converter: DateConverter$1 })
-], CryptoX509CertificateProto.prototype, "notBefore", void 0);
-__decorate([
-    ProtobufProperty({ id: CryptoX509CertificateProto_1.INDEX++, required: true, converter: DateConverter$1 })
-], CryptoX509CertificateProto.prototype, "notAfter", void 0);
-CryptoX509CertificateProto = CryptoX509CertificateProto_1 = __decorate([
-    ProtobufElement({})
-], CryptoX509CertificateProto);
-var CryptoX509CertificateRequestProto = CryptoX509CertificateRequestProto_1 = (function (_super) {
+var CryptoX509CertificateRequestProto = (function (_super) {
     __extends(CryptoX509CertificateRequestProto, _super);
     function CryptoX509CertificateRequestProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CryptoX509CertificateRequestProto_1 = CryptoX509CertificateRequestProto;
+    CryptoX509CertificateRequestProto.INDEX = CryptoCertificateProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: CryptoX509CertificateRequestProto_1.INDEX++, required: true, type: "string" })
+    ], CryptoX509CertificateRequestProto.prototype, "subjectName", void 0);
+    CryptoX509CertificateRequestProto = CryptoX509CertificateRequestProto_1 = __decorate([
+        ProtobufElement({})
+    ], CryptoX509CertificateRequestProto);
     return CryptoX509CertificateRequestProto;
+    var CryptoX509CertificateRequestProto_1;
 }(CryptoCertificateProto));
-CryptoX509CertificateRequestProto.INDEX = CryptoCertificateProto.INDEX;
-__decorate([
-    ProtobufProperty({ id: CryptoX509CertificateRequestProto_1.INDEX++, required: true, type: "string" })
-], CryptoX509CertificateRequestProto.prototype, "subjectName", void 0);
-CryptoX509CertificateRequestProto = CryptoX509CertificateRequestProto_1 = __decorate([
-    ProtobufElement({})
-], CryptoX509CertificateRequestProto);
-var CertificateStorageGetChainResultProto = CertificateStorageGetChainResultProto_1 = (function (_super) {
+var ChainItemProto = (function (_super) {
+    __extends(ChainItemProto, _super);
+    function ChainItemProto() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ChainItemProto_1 = ChainItemProto;
+    ChainItemProto.INDEX = BaseProto.INDEX;
+    __decorate([
+        ProtobufProperty({
+            id: ChainItemProto_1.INDEX++,
+            required: true,
+            type: "string",
+        })
+    ], ChainItemProto.prototype, "type", void 0);
+    __decorate([
+        ProtobufProperty({
+            id: ChainItemProto_1.INDEX++,
+            required: true,
+            converter: ArrayBufferConverter,
+        })
+    ], ChainItemProto.prototype, "value", void 0);
+    ChainItemProto = ChainItemProto_1 = __decorate([
+        ProtobufElement({})
+    ], ChainItemProto);
+    return ChainItemProto;
+    var ChainItemProto_1;
+}(BaseProto));
+var CertificateStorageGetChainResultProto = (function (_super) {
     __extends(CertificateStorageGetChainResultProto, _super);
     function CertificateStorageGetChainResultProto() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.items = [];
         return _this;
     }
+    CertificateStorageGetChainResultProto_1 = CertificateStorageGetChainResultProto;
+    CertificateStorageGetChainResultProto.INDEX = BaseProto.INDEX;
+    __decorate([
+        ProtobufProperty({
+            id: CertificateStorageGetChainResultProto_1.INDEX++,
+            required: true,
+            repeated: true,
+            parser: ChainItemProto,
+        })
+    ], CertificateStorageGetChainResultProto.prototype, "items", void 0);
+    CertificateStorageGetChainResultProto = CertificateStorageGetChainResultProto_1 = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageGetChainResultProto);
     return CertificateStorageGetChainResultProto;
+    var CertificateStorageGetChainResultProto_1;
 }(BaseProto));
-CertificateStorageGetChainResultProto.INDEX = BaseProto.INDEX;
-__decorate([
-    ProtobufProperty({
-        id: CertificateStorageGetChainResultProto_1.INDEX++,
-        required: true,
-        repeated: true,
-        converter: ArrayBufferConverter,
-    })
-], CertificateStorageGetChainResultProto.prototype, "items", void 0);
-CertificateStorageGetChainResultProto = CertificateStorageGetChainResultProto_1 = __decorate([
-    ProtobufElement({})
-], CertificateStorageGetChainResultProto);
-var CertificateStorageSetItemActionProto = CertificateStorageSetItemActionProto_1 = (function (_super) {
+var CertificateStorageSetItemActionProto = (function (_super) {
     __extends(CertificateStorageSetItemActionProto, _super);
     function CertificateStorageSetItemActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CertificateStorageSetItemActionProto_1 = CertificateStorageSetItemActionProto;
+    CertificateStorageSetItemActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageSetItemActionProto.ACTION = "crypto/certificateStorage/setItem";
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageSetItemActionProto_1.INDEX++, required: true, parser: CryptoCertificateProto })
+    ], CertificateStorageSetItemActionProto.prototype, "item", void 0);
+    CertificateStorageSetItemActionProto = CertificateStorageSetItemActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageSetItemActionProto);
     return CertificateStorageSetItemActionProto;
+    var CertificateStorageSetItemActionProto_1;
 }(CryptoActionProto));
-CertificateStorageSetItemActionProto.INDEX = CryptoActionProto.INDEX;
-CertificateStorageSetItemActionProto.ACTION = "crypto/certificateStorage/setItem";
-__decorate([
-    ProtobufProperty({ id: CertificateStorageSetItemActionProto_1.INDEX++, required: true, parser: CryptoCertificateProto })
-], CertificateStorageSetItemActionProto.prototype, "item", void 0);
-CertificateStorageSetItemActionProto = CertificateStorageSetItemActionProto_1 = __decorate([
-    ProtobufElement({})
-], CertificateStorageSetItemActionProto);
-var CertificateStorageGetItemActionProto = CertificateStorageGetItemActionProto_1 = (function (_super) {
+var CertificateStorageGetItemActionProto = (function (_super) {
     __extends(CertificateStorageGetItemActionProto, _super);
     function CertificateStorageGetItemActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CertificateStorageGetItemActionProto_1 = CertificateStorageGetItemActionProto;
+    CertificateStorageGetItemActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageGetItemActionProto.ACTION = "crypto/certificateStorage/getItem";
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageGetItemActionProto_1.INDEX++, required: true, type: "string" })
+    ], CertificateStorageGetItemActionProto.prototype, "key", void 0);
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageGetItemActionProto_1.INDEX++, parser: AlgorithmProto })
+    ], CertificateStorageGetItemActionProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageGetItemActionProto_1.INDEX++, repeated: true, type: "string" })
+    ], CertificateStorageGetItemActionProto.prototype, "keyUsages", void 0);
+    CertificateStorageGetItemActionProto = CertificateStorageGetItemActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageGetItemActionProto);
     return CertificateStorageGetItemActionProto;
+    var CertificateStorageGetItemActionProto_1;
 }(CryptoActionProto));
-CertificateStorageGetItemActionProto.INDEX = CryptoActionProto.INDEX;
-CertificateStorageGetItemActionProto.ACTION = "crypto/certificateStorage/getItem";
-__decorate([
-    ProtobufProperty({ id: CertificateStorageGetItemActionProto_1.INDEX++, required: true, type: "string" })
-], CertificateStorageGetItemActionProto.prototype, "key", void 0);
-__decorate([
-    ProtobufProperty({ id: CertificateStorageGetItemActionProto_1.INDEX++, parser: AlgorithmProto })
-], CertificateStorageGetItemActionProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: CertificateStorageGetItemActionProto_1.INDEX++, repeated: true, type: "string" })
-], CertificateStorageGetItemActionProto.prototype, "keyUsages", void 0);
-CertificateStorageGetItemActionProto = CertificateStorageGetItemActionProto_1 = __decorate([
-    ProtobufElement({})
-], CertificateStorageGetItemActionProto);
 var CertificateStorageKeysActionProto = (function (_super) {
     __extends(CertificateStorageKeysActionProto, _super);
     function CertificateStorageKeysActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CertificateStorageKeysActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageKeysActionProto.ACTION = "crypto/certificateStorage/keys";
+    CertificateStorageKeysActionProto = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageKeysActionProto);
     return CertificateStorageKeysActionProto;
 }(CryptoActionProto));
-CertificateStorageKeysActionProto.INDEX = CryptoActionProto.INDEX;
-CertificateStorageKeysActionProto.ACTION = "crypto/certificateStorage/keys";
-CertificateStorageKeysActionProto = __decorate([
-    ProtobufElement({})
-], CertificateStorageKeysActionProto);
-var CertificateStorageRemoveItemActionProto = CertificateStorageRemoveItemActionProto_1 = (function (_super) {
+var CertificateStorageRemoveItemActionProto = (function (_super) {
     __extends(CertificateStorageRemoveItemActionProto, _super);
     function CertificateStorageRemoveItemActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CertificateStorageRemoveItemActionProto_1 = CertificateStorageRemoveItemActionProto;
+    CertificateStorageRemoveItemActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageRemoveItemActionProto.ACTION = "crypto/certificateStorage/removeItem";
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageRemoveItemActionProto_1.INDEX++, required: true, type: "string" })
+    ], CertificateStorageRemoveItemActionProto.prototype, "key", void 0);
+    CertificateStorageRemoveItemActionProto = CertificateStorageRemoveItemActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageRemoveItemActionProto);
     return CertificateStorageRemoveItemActionProto;
+    var CertificateStorageRemoveItemActionProto_1;
 }(CryptoActionProto));
-CertificateStorageRemoveItemActionProto.INDEX = CryptoActionProto.INDEX;
-CertificateStorageRemoveItemActionProto.ACTION = "crypto/certificateStorage/removeItem";
-__decorate([
-    ProtobufProperty({ id: CertificateStorageRemoveItemActionProto_1.INDEX++, required: true, type: "string" })
-], CertificateStorageRemoveItemActionProto.prototype, "key", void 0);
-CertificateStorageRemoveItemActionProto = CertificateStorageRemoveItemActionProto_1 = __decorate([
-    ProtobufElement({})
-], CertificateStorageRemoveItemActionProto);
 var CertificateStorageClearActionProto = (function (_super) {
     __extends(CertificateStorageClearActionProto, _super);
     function CertificateStorageClearActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CertificateStorageClearActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageClearActionProto.ACTION = "crypto/certificateStorage/clear";
+    CertificateStorageClearActionProto = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageClearActionProto);
     return CertificateStorageClearActionProto;
 }(CryptoActionProto));
-CertificateStorageClearActionProto.INDEX = CryptoActionProto.INDEX;
-CertificateStorageClearActionProto.ACTION = "crypto/certificateStorage/clear";
-CertificateStorageClearActionProto = __decorate([
-    ProtobufElement({})
-], CertificateStorageClearActionProto);
-var CertificateStorageImportActionProto = CertificateStorageImportActionProto_1 = (function (_super) {
+var CertificateStorageImportActionProto = (function (_super) {
     __extends(CertificateStorageImportActionProto, _super);
     function CertificateStorageImportActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CertificateStorageImportActionProto_1 = CertificateStorageImportActionProto;
+    CertificateStorageImportActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageImportActionProto.ACTION = "crypto/certificateStorage/import";
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageImportActionProto_1.INDEX++, required: true, type: "string" })
+    ], CertificateStorageImportActionProto.prototype, "type", void 0);
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageImportActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
+    ], CertificateStorageImportActionProto.prototype, "data", void 0);
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageImportActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], CertificateStorageImportActionProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageImportActionProto_1.INDEX++, repeated: true, type: "string" })
+    ], CertificateStorageImportActionProto.prototype, "keyUsages", void 0);
+    CertificateStorageImportActionProto = CertificateStorageImportActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageImportActionProto);
     return CertificateStorageImportActionProto;
+    var CertificateStorageImportActionProto_1;
 }(CryptoActionProto));
-CertificateStorageImportActionProto.INDEX = CryptoActionProto.INDEX;
-CertificateStorageImportActionProto.ACTION = "crypto/certificateStorage/import";
-__decorate([
-    ProtobufProperty({ id: CertificateStorageImportActionProto_1.INDEX++, required: true, type: "string" })
-], CertificateStorageImportActionProto.prototype, "type", void 0);
-__decorate([
-    ProtobufProperty({ id: CertificateStorageImportActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
-], CertificateStorageImportActionProto.prototype, "data", void 0);
-__decorate([
-    ProtobufProperty({ id: CertificateStorageImportActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], CertificateStorageImportActionProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: CertificateStorageImportActionProto_1.INDEX++, repeated: true, type: "string" })
-], CertificateStorageImportActionProto.prototype, "keyUsages", void 0);
-CertificateStorageImportActionProto = CertificateStorageImportActionProto_1 = __decorate([
-    ProtobufElement({})
-], CertificateStorageImportActionProto);
-var CertificateStorageExportActionProto = CertificateStorageExportActionProto_1 = (function (_super) {
+var CertificateStorageExportActionProto = (function (_super) {
     __extends(CertificateStorageExportActionProto, _super);
     function CertificateStorageExportActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CertificateStorageExportActionProto_1 = CertificateStorageExportActionProto;
+    CertificateStorageExportActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageExportActionProto.ACTION = "crypto/certificateStorage/export";
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageExportActionProto_1.INDEX++, required: true, type: "string" })
+    ], CertificateStorageExportActionProto.prototype, "format", void 0);
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageExportActionProto_1.INDEX++, required: true, parser: CryptoCertificateProto })
+    ], CertificateStorageExportActionProto.prototype, "item", void 0);
+    CertificateStorageExportActionProto = CertificateStorageExportActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageExportActionProto);
     return CertificateStorageExportActionProto;
+    var CertificateStorageExportActionProto_1;
 }(CryptoActionProto));
-CertificateStorageExportActionProto.INDEX = CryptoActionProto.INDEX;
-CertificateStorageExportActionProto.ACTION = "crypto/certificateStorage/export";
-__decorate([
-    ProtobufProperty({ id: CertificateStorageExportActionProto_1.INDEX++, required: true, type: "string" })
-], CertificateStorageExportActionProto.prototype, "format", void 0);
-__decorate([
-    ProtobufProperty({ id: CertificateStorageExportActionProto_1.INDEX++, required: true, parser: CryptoCertificateProto })
-], CertificateStorageExportActionProto.prototype, "item", void 0);
-CertificateStorageExportActionProto = CertificateStorageExportActionProto_1 = __decorate([
-    ProtobufElement({})
-], CertificateStorageExportActionProto);
-var CertificateStorageIndexOfActionProto = CertificateStorageIndexOfActionProto_1 = (function (_super) {
+var CertificateStorageIndexOfActionProto = (function (_super) {
     __extends(CertificateStorageIndexOfActionProto, _super);
     function CertificateStorageIndexOfActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CertificateStorageIndexOfActionProto_1 = CertificateStorageIndexOfActionProto;
+    CertificateStorageIndexOfActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageIndexOfActionProto.ACTION = "crypto/certificateStorage/indexOf";
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageIndexOfActionProto_1.INDEX++, required: true, parser: CryptoCertificateProto })
+    ], CertificateStorageIndexOfActionProto.prototype, "item", void 0);
+    CertificateStorageIndexOfActionProto = CertificateStorageIndexOfActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageIndexOfActionProto);
     return CertificateStorageIndexOfActionProto;
+    var CertificateStorageIndexOfActionProto_1;
 }(CryptoActionProto));
-CertificateStorageIndexOfActionProto.INDEX = CryptoActionProto.INDEX;
-CertificateStorageIndexOfActionProto.ACTION = "crypto/certificateStorage/indexOf";
-__decorate([
-    ProtobufProperty({ id: CertificateStorageIndexOfActionProto_1.INDEX++, required: true, parser: CryptoCertificateProto })
-], CertificateStorageIndexOfActionProto.prototype, "item", void 0);
-CertificateStorageIndexOfActionProto = CertificateStorageIndexOfActionProto_1 = __decorate([
-    ProtobufElement({})
-], CertificateStorageIndexOfActionProto);
 var CertificateStorageGetChainActionProto = (function (_super) {
     __extends(CertificateStorageGetChainActionProto, _super);
     function CertificateStorageGetChainActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    CertificateStorageGetChainActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageGetChainActionProto.ACTION = "crypto/certificateStorage/getChain";
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageSetItemActionProto.INDEX++, required: true, parser: CryptoCertificateProto })
+    ], CertificateStorageGetChainActionProto.prototype, "item", void 0);
+    CertificateStorageGetChainActionProto = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageGetChainActionProto);
     return CertificateStorageGetChainActionProto;
 }(CryptoActionProto));
-CertificateStorageGetChainActionProto.INDEX = CryptoActionProto.INDEX;
-CertificateStorageGetChainActionProto.ACTION = "crypto/certificateStorage/getChain";
-__decorate([
-    ProtobufProperty({ id: CertificateStorageSetItemActionProto.INDEX++, required: true, parser: CryptoCertificateProto })
-], CertificateStorageGetChainActionProto.prototype, "item", void 0);
-CertificateStorageGetChainActionProto = __decorate([
-    ProtobufElement({})
-], CertificateStorageGetChainActionProto);
-var CryptoCertificateProto_1;
-var CryptoX509CertificateProto_1;
-var CryptoX509CertificateRequestProto_1;
-var CertificateStorageGetChainResultProto_1;
-var CertificateStorageSetItemActionProto_1;
-var CertificateStorageGetItemActionProto_1;
-var CertificateStorageRemoveItemActionProto_1;
-var CertificateStorageImportActionProto_1;
-var CertificateStorageExportActionProto_1;
-var CertificateStorageIndexOfActionProto_1;
+var CertificateStorageGetCRLActionProto = (function (_super) {
+    __extends(CertificateStorageGetCRLActionProto, _super);
+    function CertificateStorageGetCRLActionProto() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    CertificateStorageGetCRLActionProto_1 = CertificateStorageGetCRLActionProto;
+    CertificateStorageGetCRLActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageGetCRLActionProto.ACTION = "crypto/certificateStorage/getCRL";
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageGetCRLActionProto_1.INDEX++, required: true, type: "string" })
+    ], CertificateStorageGetCRLActionProto.prototype, "url", void 0);
+    CertificateStorageGetCRLActionProto = CertificateStorageGetCRLActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageGetCRLActionProto);
+    return CertificateStorageGetCRLActionProto;
+    var CertificateStorageGetCRLActionProto_1;
+}(CryptoActionProto));
+var OCSPRequestOptionsProto = (function (_super) {
+    __extends(OCSPRequestOptionsProto, _super);
+    function OCSPRequestOptionsProto() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    OCSPRequestOptionsProto_1 = OCSPRequestOptionsProto;
+    OCSPRequestOptionsProto.INDEX = BaseProto.INDEX;
+    __decorate([
+        ProtobufProperty({ id: OCSPRequestOptionsProto_1.INDEX++, required: false, type: "string", defaultValue: "get" })
+    ], OCSPRequestOptionsProto.prototype, "method", void 0);
+    OCSPRequestOptionsProto = OCSPRequestOptionsProto_1 = __decorate([
+        ProtobufElement({})
+    ], OCSPRequestOptionsProto);
+    return OCSPRequestOptionsProto;
+    var OCSPRequestOptionsProto_1;
+}(BaseProto));
+var CertificateStorageGetOCSPActionProto = (function (_super) {
+    __extends(CertificateStorageGetOCSPActionProto, _super);
+    function CertificateStorageGetOCSPActionProto() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    CertificateStorageGetOCSPActionProto_1 = CertificateStorageGetOCSPActionProto;
+    CertificateStorageGetOCSPActionProto.INDEX = CryptoActionProto.INDEX;
+    CertificateStorageGetOCSPActionProto.ACTION = "crypto/certificateStorage/getOCSP";
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageGetOCSPActionProto_1.INDEX++, required: true, type: "string" })
+    ], CertificateStorageGetOCSPActionProto.prototype, "url", void 0);
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageGetOCSPActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
+    ], CertificateStorageGetOCSPActionProto.prototype, "request", void 0);
+    __decorate([
+        ProtobufProperty({ id: CertificateStorageGetOCSPActionProto_1.INDEX++, required: false, parser: OCSPRequestOptionsProto })
+    ], CertificateStorageGetOCSPActionProto.prototype, "options", void 0);
+    CertificateStorageGetOCSPActionProto = CertificateStorageGetOCSPActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], CertificateStorageGetOCSPActionProto);
+    return CertificateStorageGetOCSPActionProto;
+    var CertificateStorageGetOCSPActionProto_1;
+}(CryptoActionProto));
 
 var SocketCertificateStorage = (function () {
-    function SocketCertificateStorage(service) {
-        this.service = service;
+    function SocketCertificateStorage(provider) {
+        this.provider = provider;
     }
     SocketCertificateStorage.prototype.indexOf = function (item) {
         return __awaiter(this, void 0, void 0, function () {
@@ -5320,9 +5454,9 @@ var SocketCertificateStorage = (function () {
                 switch (_a.label) {
                     case 0:
                         proto = new CertificateStorageIndexOfActionProto();
-                        proto.providerID = this.service.id;
+                        proto.providerID = this.provider.id;
                         proto.item = item;
-                        return [4, this.service.client.send(proto)];
+                        return [4, this.provider.client.send(proto)];
                     case 1:
                         result = _a.sent();
                         return [2, result ? Convert.ToUtf8String(result) : null];
@@ -5337,10 +5471,10 @@ var SocketCertificateStorage = (function () {
                 switch (_a.label) {
                     case 0:
                         proto = new CertificateStorageExportActionProto();
-                        proto.providerID = this.service.id;
+                        proto.providerID = this.provider.id;
                         proto.format = "raw";
                         proto.item = item;
-                        return [4, this.service.client.send(proto)];
+                        return [4, this.provider.client.send(proto)];
                     case 1:
                         result = _a.sent();
                         if (format === "raw") {
@@ -5391,18 +5525,18 @@ var SocketCertificateStorage = (function () {
                     case 0:
                         alg = PrepareAlgorithm(algorithm);
                         proto = new CertificateStorageImportActionProto();
-                        proto.providerID = this.service.id;
+                        proto.providerID = this.provider.id;
                         proto.type = type;
                         proto.data = data;
                         proto.algorithm.fromAlgorithm(alg);
                         proto.keyUsages = keyUsages;
-                        return [4, this.service.client.send(proto)];
+                        return [4, this.provider.client.send(proto)];
                     case 1:
                         result = _a.sent();
                         return [4, CryptoCertificateProto.importProto(result)];
                     case 2:
                         certItem = _a.sent();
-                        return [2, prepareCertItem(certItem)];
+                        return [2, this.prepareCertItem(certItem)];
                 }
             });
         });
@@ -5414,8 +5548,8 @@ var SocketCertificateStorage = (function () {
                 switch (_a.label) {
                     case 0:
                         proto = new CertificateStorageKeysActionProto();
-                        proto.providerID = this.service.id;
-                        return [4, this.service.client.send(proto)];
+                        proto.providerID = this.provider.id;
+                        return [4, this.provider.client.send(proto)];
                     case 1:
                         result = _a.sent();
                         if (result) {
@@ -5434,21 +5568,21 @@ var SocketCertificateStorage = (function () {
                 switch (_a.label) {
                     case 0:
                         proto = new CertificateStorageGetItemActionProto();
-                        proto.providerID = this.service.id;
+                        proto.providerID = this.provider.id;
                         proto.key = key;
                         if (algorithm) {
                             alg = PrepareAlgorithm(algorithm);
                             proto.algorithm.fromAlgorithm(alg);
                             proto.keyUsages = keyUsages;
                         }
-                        return [4, this.service.client.send(proto)];
+                        return [4, this.provider.client.send(proto)];
                     case 1:
                         result = _a.sent();
                         if (!(result && result.byteLength)) return [3, 3];
                         return [4, CryptoCertificateProto.importProto(result)];
                     case 2:
                         certItem = _a.sent();
-                        return [2, prepareCertItem(certItem)];
+                        return [2, this.prepareCertItem(certItem)];
                     case 3: return [2, null];
                 }
             });
@@ -5461,9 +5595,9 @@ var SocketCertificateStorage = (function () {
                 switch (_a.label) {
                     case 0:
                         proto = new CertificateStorageSetItemActionProto();
-                        proto.providerID = this.service.id;
+                        proto.providerID = this.provider.id;
                         proto.item = value;
-                        return [4, this.service.client.send(proto)];
+                        return [4, this.provider.client.send(proto)];
                     case 1:
                         data = _a.sent();
                         return [2, Convert.ToUtf8String(data)];
@@ -5478,9 +5612,9 @@ var SocketCertificateStorage = (function () {
                 switch (_a.label) {
                     case 0:
                         proto = new CertificateStorageRemoveItemActionProto();
-                        proto.providerID = this.service.id;
+                        proto.providerID = this.provider.id;
                         proto.key = key;
-                        return [4, this.service.client.send(proto)];
+                        return [4, this.provider.client.send(proto)];
                     case 1:
                         _a.sent();
                         return [2];
@@ -5495,8 +5629,8 @@ var SocketCertificateStorage = (function () {
                 switch (_a.label) {
                     case 0:
                         proto = new CertificateStorageClearActionProto();
-                        proto.providerID = this.service.id;
-                        return [4, this.service.client.send(proto)];
+                        proto.providerID = this.provider.id;
+                        return [4, this.provider.client.send(proto)];
                     case 1:
                         _a.sent();
                         return [2];
@@ -5511,9 +5645,9 @@ var SocketCertificateStorage = (function () {
                 switch (_a.label) {
                     case 0:
                         proto = new CertificateStorageGetChainActionProto();
-                        proto.providerID = this.service.id;
+                        proto.providerID = this.provider.id;
                         proto.item = value;
-                        return [4, this.service.client.send(proto)];
+                        return [4, this.provider.client.send(proto)];
                     case 1:
                         data = _a.sent();
                         return [4, CertificateStorageGetChainResultProto.importProto(data)];
@@ -5524,126 +5658,177 @@ var SocketCertificateStorage = (function () {
             });
         });
     };
+    SocketCertificateStorage.prototype.getCRL = function (url) {
+        return __awaiter(this, void 0, void 0, function () {
+            var proto, data;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        proto = new CertificateStorageGetCRLActionProto();
+                        proto.providerID = this.provider.id;
+                        proto.url = url;
+                        return [4, this.provider.client.send(proto)];
+                    case 1:
+                        data = _a.sent();
+                        return [2, data];
+                }
+            });
+        });
+    };
+    SocketCertificateStorage.prototype.getOCSP = function (url, request, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var proto, key, data;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        proto = new CertificateStorageGetOCSPActionProto();
+                        proto.providerID = this.provider.id;
+                        proto.url = url;
+                        proto.request = request;
+                        if (options) {
+                            for (key in options) {
+                                proto.options[key] = options[key];
+                            }
+                        }
+                        return [4, this.provider.client.send(proto)];
+                    case 1:
+                        data = _a.sent();
+                        return [2, data];
+                }
+            });
+        });
+    };
+    SocketCertificateStorage.prototype.prepareCertItem = function (item) {
+        return __awaiter(this, void 0, void 0, function () {
+            var raw, result, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4, item.exportProto()];
+                    case 1:
+                        raw = _b.sent();
+                        _a = item.type;
+                        switch (_a) {
+                            case "x509": return [3, 2];
+                            case "request": return [3, 4];
+                        }
+                        return [3, 6];
+                    case 2: return [4, CryptoX509CertificateProto.importProto(raw)];
+                    case 3:
+                        result = _b.sent();
+                        return [3, 7];
+                    case 4: return [4, CryptoX509CertificateRequestProto.importProto(raw)];
+                    case 5:
+                        result = _b.sent();
+                        return [3, 7];
+                    case 6: throw new Error("Unsupported CertificateItem type '" + item.type + "'");
+                    case 7:
+                        result.provider = this.provider;
+                        return [2, result];
+                }
+            });
+        });
+    };
     return SocketCertificateStorage;
 }());
-function prepareCertItem(item) {
-    return __awaiter(this, void 0, void 0, function () {
-        var raw, _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4, item.exportProto()];
-                case 1:
-                    raw = _b.sent();
-                    _a = item.type;
-                    switch (_a) {
-                        case "x509": return [3, 2];
-                        case "request": return [3, 4];
-                    }
-                    return [3, 6];
-                case 2: return [4, CryptoX509CertificateProto.importProto(raw)];
-                case 3: return [2, _b.sent()];
-                case 4: return [4, CryptoX509CertificateRequestProto.importProto(raw)];
-                case 5: return [2, _b.sent()];
-                case 6: throw new Error("Unsupported CertificateItem type '" + item.type + "'");
-            }
-        });
-    });
-}
 
-var KeyStorageSetItemActionProto = KeyStorageSetItemActionProto_1 = (function (_super) {
+var KeyStorageSetItemActionProto = (function (_super) {
     __extends(KeyStorageSetItemActionProto, _super);
     function KeyStorageSetItemActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    KeyStorageSetItemActionProto_1 = KeyStorageSetItemActionProto;
+    KeyStorageSetItemActionProto.INDEX = CryptoActionProto.INDEX;
+    KeyStorageSetItemActionProto.ACTION = "crypto/keyStorage/setItem";
+    __decorate([
+        ProtobufProperty({ id: KeyStorageSetItemActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], KeyStorageSetItemActionProto.prototype, "item", void 0);
+    KeyStorageSetItemActionProto = KeyStorageSetItemActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], KeyStorageSetItemActionProto);
     return KeyStorageSetItemActionProto;
+    var KeyStorageSetItemActionProto_1;
 }(CryptoActionProto));
-KeyStorageSetItemActionProto.INDEX = CryptoActionProto.INDEX;
-KeyStorageSetItemActionProto.ACTION = "crypto/keyStorage/setItem";
-__decorate([
-    ProtobufProperty({ id: KeyStorageSetItemActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], KeyStorageSetItemActionProto.prototype, "item", void 0);
-KeyStorageSetItemActionProto = KeyStorageSetItemActionProto_1 = __decorate([
-    ProtobufElement({})
-], KeyStorageSetItemActionProto);
-var KeyStorageGetItemActionProto = KeyStorageGetItemActionProto_1 = (function (_super) {
+var KeyStorageGetItemActionProto = (function (_super) {
     __extends(KeyStorageGetItemActionProto, _super);
     function KeyStorageGetItemActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    KeyStorageGetItemActionProto_1 = KeyStorageGetItemActionProto;
+    KeyStorageGetItemActionProto.INDEX = CryptoActionProto.INDEX;
+    KeyStorageGetItemActionProto.ACTION = "crypto/keyStorage/getItem";
+    __decorate([
+        ProtobufProperty({ id: KeyStorageGetItemActionProto_1.INDEX++, required: true, type: "string" })
+    ], KeyStorageGetItemActionProto.prototype, "key", void 0);
+    __decorate([
+        ProtobufProperty({ id: KeyStorageGetItemActionProto_1.INDEX++, parser: AlgorithmProto })
+    ], KeyStorageGetItemActionProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: KeyStorageGetItemActionProto_1.INDEX++, repeated: true, type: "string" })
+    ], KeyStorageGetItemActionProto.prototype, "keyUsages", void 0);
+    KeyStorageGetItemActionProto = KeyStorageGetItemActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], KeyStorageGetItemActionProto);
     return KeyStorageGetItemActionProto;
+    var KeyStorageGetItemActionProto_1;
 }(CryptoActionProto));
-KeyStorageGetItemActionProto.INDEX = CryptoActionProto.INDEX;
-KeyStorageGetItemActionProto.ACTION = "crypto/keyStorage/getItem";
-__decorate([
-    ProtobufProperty({ id: KeyStorageGetItemActionProto_1.INDEX++, required: true, type: "string" })
-], KeyStorageGetItemActionProto.prototype, "key", void 0);
-__decorate([
-    ProtobufProperty({ id: KeyStorageGetItemActionProto_1.INDEX++, parser: AlgorithmProto })
-], KeyStorageGetItemActionProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: KeyStorageGetItemActionProto_1.INDEX++, repeated: true, type: "string" })
-], KeyStorageGetItemActionProto.prototype, "keyUsages", void 0);
-KeyStorageGetItemActionProto = KeyStorageGetItemActionProto_1 = __decorate([
-    ProtobufElement({})
-], KeyStorageGetItemActionProto);
 var KeyStorageKeysActionProto = (function (_super) {
     __extends(KeyStorageKeysActionProto, _super);
     function KeyStorageKeysActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    KeyStorageKeysActionProto.INDEX = CryptoActionProto.INDEX;
+    KeyStorageKeysActionProto.ACTION = "crypto/keyStorage/keys";
+    KeyStorageKeysActionProto = __decorate([
+        ProtobufElement({})
+    ], KeyStorageKeysActionProto);
     return KeyStorageKeysActionProto;
 }(CryptoActionProto));
-KeyStorageKeysActionProto.INDEX = CryptoActionProto.INDEX;
-KeyStorageKeysActionProto.ACTION = "crypto/keyStorage/keys";
-KeyStorageKeysActionProto = __decorate([
-    ProtobufElement({})
-], KeyStorageKeysActionProto);
-var KeyStorageRemoveItemActionProto = KeyStorageRemoveItemActionProto_1 = (function (_super) {
+var KeyStorageRemoveItemActionProto = (function (_super) {
     __extends(KeyStorageRemoveItemActionProto, _super);
     function KeyStorageRemoveItemActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    KeyStorageRemoveItemActionProto_1 = KeyStorageRemoveItemActionProto;
+    KeyStorageRemoveItemActionProto.INDEX = CryptoActionProto.INDEX;
+    KeyStorageRemoveItemActionProto.ACTION = "crypto/keyStorage/removeItem";
+    __decorate([
+        ProtobufProperty({ id: KeyStorageRemoveItemActionProto_1.INDEX++, required: true, type: "string" })
+    ], KeyStorageRemoveItemActionProto.prototype, "key", void 0);
+    KeyStorageRemoveItemActionProto = KeyStorageRemoveItemActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], KeyStorageRemoveItemActionProto);
     return KeyStorageRemoveItemActionProto;
+    var KeyStorageRemoveItemActionProto_1;
 }(CryptoActionProto));
-KeyStorageRemoveItemActionProto.INDEX = CryptoActionProto.INDEX;
-KeyStorageRemoveItemActionProto.ACTION = "crypto/keyStorage/removeItem";
-__decorate([
-    ProtobufProperty({ id: KeyStorageRemoveItemActionProto_1.INDEX++, required: true, type: "string" })
-], KeyStorageRemoveItemActionProto.prototype, "key", void 0);
-KeyStorageRemoveItemActionProto = KeyStorageRemoveItemActionProto_1 = __decorate([
-    ProtobufElement({})
-], KeyStorageRemoveItemActionProto);
 var KeyStorageClearActionProto = (function (_super) {
     __extends(KeyStorageClearActionProto, _super);
     function KeyStorageClearActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    KeyStorageClearActionProto.INDEX = CryptoActionProto.INDEX;
+    KeyStorageClearActionProto.ACTION = "crypto/keyStorage/clear";
+    KeyStorageClearActionProto = __decorate([
+        ProtobufElement({})
+    ], KeyStorageClearActionProto);
     return KeyStorageClearActionProto;
 }(CryptoActionProto));
-KeyStorageClearActionProto.INDEX = CryptoActionProto.INDEX;
-KeyStorageClearActionProto.ACTION = "crypto/keyStorage/clear";
-KeyStorageClearActionProto = __decorate([
-    ProtobufElement({})
-], KeyStorageClearActionProto);
-var KeyStorageIndexOfActionProto = KeyStorageIndexOfActionProto_1 = (function (_super) {
+var KeyStorageIndexOfActionProto = (function (_super) {
     __extends(KeyStorageIndexOfActionProto, _super);
     function KeyStorageIndexOfActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    KeyStorageIndexOfActionProto_1 = KeyStorageIndexOfActionProto;
+    KeyStorageIndexOfActionProto.INDEX = CryptoActionProto.INDEX;
+    KeyStorageIndexOfActionProto.ACTION = "crypto/keyStorage/indexOf";
+    __decorate([
+        ProtobufProperty({ id: KeyStorageIndexOfActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], KeyStorageIndexOfActionProto.prototype, "item", void 0);
+    KeyStorageIndexOfActionProto = KeyStorageIndexOfActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], KeyStorageIndexOfActionProto);
     return KeyStorageIndexOfActionProto;
+    var KeyStorageIndexOfActionProto_1;
 }(CryptoActionProto));
-KeyStorageIndexOfActionProto.INDEX = CryptoActionProto.INDEX;
-KeyStorageIndexOfActionProto.ACTION = "crypto/keyStorage/indexOf";
-__decorate([
-    ProtobufProperty({ id: KeyStorageIndexOfActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], KeyStorageIndexOfActionProto.prototype, "item", void 0);
-KeyStorageIndexOfActionProto = KeyStorageIndexOfActionProto_1 = __decorate([
-    ProtobufElement({})
-], KeyStorageIndexOfActionProto);
-var KeyStorageSetItemActionProto_1;
-var KeyStorageGetItemActionProto_1;
-var KeyStorageRemoveItemActionProto_1;
-var KeyStorageIndexOfActionProto_1;
 
 var SocketKeyStorage = (function () {
     function SocketKeyStorage(service) {
@@ -5768,265 +5953,275 @@ var SocketKeyStorage = (function () {
     return SocketKeyStorage;
 }());
 
-var DigestActionProto = DigestActionProto_1 = (function (_super) {
+var DigestActionProto = (function (_super) {
     __extends(DigestActionProto, _super);
     function DigestActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    DigestActionProto_1 = DigestActionProto;
+    DigestActionProto.INDEX = CryptoActionProto.INDEX;
+    DigestActionProto.ACTION = "crypto/subtle/digest";
+    __decorate([
+        ProtobufProperty({ id: DigestActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], DigestActionProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: DigestActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
+    ], DigestActionProto.prototype, "data", void 0);
+    DigestActionProto = DigestActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], DigestActionProto);
     return DigestActionProto;
+    var DigestActionProto_1;
 }(CryptoActionProto));
-DigestActionProto.INDEX = CryptoActionProto.INDEX;
-DigestActionProto.ACTION = "crypto/subtle/digest";
-__decorate([
-    ProtobufProperty({ id: DigestActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], DigestActionProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: DigestActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
-], DigestActionProto.prototype, "data", void 0);
-DigestActionProto = DigestActionProto_1 = __decorate([
-    ProtobufElement({})
-], DigestActionProto);
-var GenerateKeyActionProto = GenerateKeyActionProto_1 = (function (_super) {
+var GenerateKeyActionProto = (function (_super) {
     __extends(GenerateKeyActionProto, _super);
     function GenerateKeyActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    GenerateKeyActionProto_1 = GenerateKeyActionProto;
+    GenerateKeyActionProto.INDEX = CryptoActionProto.INDEX;
+    GenerateKeyActionProto.ACTION = "crypto/subtle/generateKey";
+    __decorate([
+        ProtobufProperty({ id: GenerateKeyActionProto_1.INDEX++, type: "bytes", required: true, parser: AlgorithmProto })
+    ], GenerateKeyActionProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: GenerateKeyActionProto_1.INDEX++, type: "bool", required: true })
+    ], GenerateKeyActionProto.prototype, "extractable", void 0);
+    __decorate([
+        ProtobufProperty({ id: GenerateKeyActionProto_1.INDEX++, type: "string", repeated: true })
+    ], GenerateKeyActionProto.prototype, "usage", void 0);
+    GenerateKeyActionProto = GenerateKeyActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], GenerateKeyActionProto);
     return GenerateKeyActionProto;
+    var GenerateKeyActionProto_1;
 }(CryptoActionProto));
-GenerateKeyActionProto.INDEX = CryptoActionProto.INDEX;
-GenerateKeyActionProto.ACTION = "crypto/subtle/generateKey";
-__decorate([
-    ProtobufProperty({ id: GenerateKeyActionProto_1.INDEX++, type: "bytes", required: true, parser: AlgorithmProto })
-], GenerateKeyActionProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: GenerateKeyActionProto_1.INDEX++, type: "bool", required: true })
-], GenerateKeyActionProto.prototype, "extractable", void 0);
-__decorate([
-    ProtobufProperty({ id: GenerateKeyActionProto_1.INDEX++, type: "string", repeated: true })
-], GenerateKeyActionProto.prototype, "usage", void 0);
-GenerateKeyActionProto = GenerateKeyActionProto_1 = __decorate([
-    ProtobufElement({})
-], GenerateKeyActionProto);
-var SignActionProto = SignActionProto_1 = (function (_super) {
+var SignActionProto = (function (_super) {
     __extends(SignActionProto, _super);
     function SignActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    SignActionProto_1 = SignActionProto;
+    SignActionProto.INDEX = CryptoActionProto.INDEX;
+    SignActionProto.ACTION = "crypto/subtle/sign";
+    __decorate([
+        ProtobufProperty({ id: SignActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], SignActionProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: SignActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], SignActionProto.prototype, "key", void 0);
+    __decorate([
+        ProtobufProperty({ id: SignActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
+    ], SignActionProto.prototype, "data", void 0);
+    SignActionProto = SignActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], SignActionProto);
     return SignActionProto;
+    var SignActionProto_1;
 }(CryptoActionProto));
-SignActionProto.INDEX = CryptoActionProto.INDEX;
-SignActionProto.ACTION = "crypto/subtle/sign";
-__decorate([
-    ProtobufProperty({ id: SignActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], SignActionProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: SignActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], SignActionProto.prototype, "key", void 0);
-__decorate([
-    ProtobufProperty({ id: SignActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
-], SignActionProto.prototype, "data", void 0);
-SignActionProto = SignActionProto_1 = __decorate([
-    ProtobufElement({})
-], SignActionProto);
-var VerifyActionProto = VerifyActionProto_1 = (function (_super) {
+var VerifyActionProto = (function (_super) {
     __extends(VerifyActionProto, _super);
     function VerifyActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    VerifyActionProto_1 = VerifyActionProto;
+    VerifyActionProto.INDEX = SignActionProto.INDEX;
+    VerifyActionProto.ACTION = "crypto/subtle/verify";
+    __decorate([
+        ProtobufProperty({ id: VerifyActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
+    ], VerifyActionProto.prototype, "signature", void 0);
+    VerifyActionProto = VerifyActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], VerifyActionProto);
     return VerifyActionProto;
+    var VerifyActionProto_1;
 }(SignActionProto));
-VerifyActionProto.INDEX = SignActionProto.INDEX;
-VerifyActionProto.ACTION = "crypto/subtle/verify";
-__decorate([
-    ProtobufProperty({ id: VerifyActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
-], VerifyActionProto.prototype, "signature", void 0);
-VerifyActionProto = VerifyActionProto_1 = __decorate([
-    ProtobufElement({})
-], VerifyActionProto);
 var EncryptActionProto = (function (_super) {
     __extends(EncryptActionProto, _super);
     function EncryptActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    EncryptActionProto.INDEX = SignActionProto.INDEX;
+    EncryptActionProto.ACTION = "crypto/subtle/encrypt";
+    EncryptActionProto = __decorate([
+        ProtobufElement({})
+    ], EncryptActionProto);
     return EncryptActionProto;
 }(SignActionProto));
-EncryptActionProto.INDEX = SignActionProto.INDEX;
-EncryptActionProto.ACTION = "crypto/subtle/encrypt";
-EncryptActionProto = __decorate([
-    ProtobufElement({})
-], EncryptActionProto);
 var DecryptActionProto = (function (_super) {
     __extends(DecryptActionProto, _super);
     function DecryptActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    DecryptActionProto.INDEX = SignActionProto.INDEX;
+    DecryptActionProto.ACTION = "crypto/subtle/decrypt";
+    DecryptActionProto = __decorate([
+        ProtobufElement({})
+    ], DecryptActionProto);
     return DecryptActionProto;
 }(SignActionProto));
-DecryptActionProto.INDEX = SignActionProto.INDEX;
-DecryptActionProto.ACTION = "crypto/subtle/decrypt";
-DecryptActionProto = __decorate([
-    ProtobufElement({})
-], DecryptActionProto);
-var DeriveBitsActionProto = DeriveBitsActionProto_1 = (function (_super) {
+var DeriveBitsActionProto = (function (_super) {
     __extends(DeriveBitsActionProto, _super);
     function DeriveBitsActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    DeriveBitsActionProto_1 = DeriveBitsActionProto;
+    DeriveBitsActionProto.INDEX = CryptoActionProto.INDEX;
+    DeriveBitsActionProto.ACTION = "crypto/subtle/deriveBits";
+    __decorate([
+        ProtobufProperty({ id: DeriveBitsActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], DeriveBitsActionProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: DeriveBitsActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], DeriveBitsActionProto.prototype, "key", void 0);
+    __decorate([
+        ProtobufProperty({ id: DeriveBitsActionProto_1.INDEX++, required: true, type: "uint32" })
+    ], DeriveBitsActionProto.prototype, "length", void 0);
+    DeriveBitsActionProto = DeriveBitsActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], DeriveBitsActionProto);
     return DeriveBitsActionProto;
+    var DeriveBitsActionProto_1;
 }(CryptoActionProto));
-DeriveBitsActionProto.INDEX = CryptoActionProto.INDEX;
-DeriveBitsActionProto.ACTION = "crypto/subtle/deriveBits";
-__decorate([
-    ProtobufProperty({ id: DeriveBitsActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], DeriveBitsActionProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: DeriveBitsActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], DeriveBitsActionProto.prototype, "key", void 0);
-__decorate([
-    ProtobufProperty({ id: DeriveBitsActionProto_1.INDEX++, required: true, type: "uint32" })
-], DeriveBitsActionProto.prototype, "length", void 0);
-DeriveBitsActionProto = DeriveBitsActionProto_1 = __decorate([
-    ProtobufElement({})
-], DeriveBitsActionProto);
-var DeriveKeyActionProto = DeriveKeyActionProto_1 = (function (_super) {
+var DeriveKeyActionProto = (function (_super) {
     __extends(DeriveKeyActionProto, _super);
     function DeriveKeyActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    DeriveKeyActionProto_1 = DeriveKeyActionProto;
+    DeriveKeyActionProto.INDEX = CryptoActionProto.INDEX;
+    DeriveKeyActionProto.ACTION = "crypto/subtle/deriveKey";
+    __decorate([
+        ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], DeriveKeyActionProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], DeriveKeyActionProto.prototype, "key", void 0);
+    __decorate([
+        ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], DeriveKeyActionProto.prototype, "derivedKeyType", void 0);
+    __decorate([
+        ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, type: "bool" })
+    ], DeriveKeyActionProto.prototype, "extractable", void 0);
+    __decorate([
+        ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, type: "string", repeated: true })
+    ], DeriveKeyActionProto.prototype, "usage", void 0);
+    DeriveKeyActionProto = DeriveKeyActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], DeriveKeyActionProto);
     return DeriveKeyActionProto;
+    var DeriveKeyActionProto_1;
 }(CryptoActionProto));
-DeriveKeyActionProto.INDEX = CryptoActionProto.INDEX;
-DeriveKeyActionProto.ACTION = "crypto/subtle/deriveKey";
-__decorate([
-    ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], DeriveKeyActionProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], DeriveKeyActionProto.prototype, "key", void 0);
-__decorate([
-    ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], DeriveKeyActionProto.prototype, "derivedKeyType", void 0);
-__decorate([
-    ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, type: "bool" })
-], DeriveKeyActionProto.prototype, "extractable", void 0);
-__decorate([
-    ProtobufProperty({ id: DeriveKeyActionProto_1.INDEX++, type: "string", repeated: true })
-], DeriveKeyActionProto.prototype, "usage", void 0);
-DeriveKeyActionProto = DeriveKeyActionProto_1 = __decorate([
-    ProtobufElement({})
-], DeriveKeyActionProto);
-var UnwrapKeyActionProto = UnwrapKeyActionProto_1 = (function (_super) {
+var UnwrapKeyActionProto = (function (_super) {
     __extends(UnwrapKeyActionProto, _super);
     function UnwrapKeyActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    UnwrapKeyActionProto_1 = UnwrapKeyActionProto;
+    UnwrapKeyActionProto.INDEX = CryptoActionProto.INDEX;
+    UnwrapKeyActionProto.ACTION = "crypto/subtle/unwrapKey";
+    __decorate([
+        ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, type: "string" })
+    ], UnwrapKeyActionProto.prototype, "format", void 0);
+    __decorate([
+        ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
+    ], UnwrapKeyActionProto.prototype, "wrappedKey", void 0);
+    __decorate([
+        ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], UnwrapKeyActionProto.prototype, "unwrappingKey", void 0);
+    __decorate([
+        ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], UnwrapKeyActionProto.prototype, "unwrapAlgorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], UnwrapKeyActionProto.prototype, "unwrappedKeyAlgorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, type: "bool" })
+    ], UnwrapKeyActionProto.prototype, "extractable", void 0);
+    __decorate([
+        ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, type: "string", repeated: true })
+    ], UnwrapKeyActionProto.prototype, "keyUsage", void 0);
+    UnwrapKeyActionProto = UnwrapKeyActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], UnwrapKeyActionProto);
     return UnwrapKeyActionProto;
+    var UnwrapKeyActionProto_1;
 }(CryptoActionProto));
-UnwrapKeyActionProto.INDEX = CryptoActionProto.INDEX;
-UnwrapKeyActionProto.ACTION = "crypto/subtle/unwrapKey";
-__decorate([
-    ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, type: "string" })
-], UnwrapKeyActionProto.prototype, "format", void 0);
-__decorate([
-    ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
-], UnwrapKeyActionProto.prototype, "wrappedKey", void 0);
-__decorate([
-    ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], UnwrapKeyActionProto.prototype, "unwrappingKey", void 0);
-__decorate([
-    ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], UnwrapKeyActionProto.prototype, "unwrapAlgorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], UnwrapKeyActionProto.prototype, "unwrappedKeyAlgorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, type: "bool" })
-], UnwrapKeyActionProto.prototype, "extractable", void 0);
-__decorate([
-    ProtobufProperty({ id: UnwrapKeyActionProto_1.INDEX++, type: "string", repeated: true })
-], UnwrapKeyActionProto.prototype, "keyUsage", void 0);
-UnwrapKeyActionProto = UnwrapKeyActionProto_1 = __decorate([
-    ProtobufElement({})
-], UnwrapKeyActionProto);
-var WrapKeyActionProto = WrapKeyActionProto_1 = (function (_super) {
+var WrapKeyActionProto = (function (_super) {
     __extends(WrapKeyActionProto, _super);
     function WrapKeyActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    WrapKeyActionProto_1 = WrapKeyActionProto;
+    WrapKeyActionProto.INDEX = CryptoActionProto.INDEX;
+    WrapKeyActionProto.ACTION = "crypto/subtle/wrapKey";
+    __decorate([
+        ProtobufProperty({ id: WrapKeyActionProto_1.INDEX++, required: true, type: "string" })
+    ], WrapKeyActionProto.prototype, "format", void 0);
+    __decorate([
+        ProtobufProperty({ id: WrapKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], WrapKeyActionProto.prototype, "key", void 0);
+    __decorate([
+        ProtobufProperty({ id: WrapKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], WrapKeyActionProto.prototype, "wrappingKey", void 0);
+    __decorate([
+        ProtobufProperty({ id: WrapKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], WrapKeyActionProto.prototype, "wrapAlgorithm", void 0);
+    WrapKeyActionProto = WrapKeyActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], WrapKeyActionProto);
     return WrapKeyActionProto;
+    var WrapKeyActionProto_1;
 }(CryptoActionProto));
-WrapKeyActionProto.INDEX = CryptoActionProto.INDEX;
-WrapKeyActionProto.ACTION = "crypto/subtle/wrapKey";
-__decorate([
-    ProtobufProperty({ id: WrapKeyActionProto_1.INDEX++, required: true, type: "string" })
-], WrapKeyActionProto.prototype, "format", void 0);
-__decorate([
-    ProtobufProperty({ id: WrapKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], WrapKeyActionProto.prototype, "key", void 0);
-__decorate([
-    ProtobufProperty({ id: WrapKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], WrapKeyActionProto.prototype, "wrappingKey", void 0);
-__decorate([
-    ProtobufProperty({ id: WrapKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], WrapKeyActionProto.prototype, "wrapAlgorithm", void 0);
-WrapKeyActionProto = WrapKeyActionProto_1 = __decorate([
-    ProtobufElement({})
-], WrapKeyActionProto);
-var ExportKeyActionProto = ExportKeyActionProto_1 = (function (_super) {
+var ExportKeyActionProto = (function (_super) {
     __extends(ExportKeyActionProto, _super);
     function ExportKeyActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ExportKeyActionProto_1 = ExportKeyActionProto;
+    ExportKeyActionProto.INDEX = CryptoActionProto.INDEX;
+    ExportKeyActionProto.ACTION = "crypto/subtle/exportKey";
+    __decorate([
+        ProtobufProperty({ id: ExportKeyActionProto_1.INDEX++, type: "string", required: true })
+    ], ExportKeyActionProto.prototype, "format", void 0);
+    __decorate([
+        ProtobufProperty({ id: ExportKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
+    ], ExportKeyActionProto.prototype, "key", void 0);
+    ExportKeyActionProto = ExportKeyActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], ExportKeyActionProto);
     return ExportKeyActionProto;
+    var ExportKeyActionProto_1;
 }(CryptoActionProto));
-ExportKeyActionProto.INDEX = CryptoActionProto.INDEX;
-ExportKeyActionProto.ACTION = "crypto/subtle/exportKey";
-__decorate([
-    ProtobufProperty({ id: ExportKeyActionProto_1.INDEX++, type: "string", required: true })
-], ExportKeyActionProto.prototype, "format", void 0);
-__decorate([
-    ProtobufProperty({ id: ExportKeyActionProto_1.INDEX++, required: true, parser: CryptoKeyProto })
-], ExportKeyActionProto.prototype, "key", void 0);
-ExportKeyActionProto = ExportKeyActionProto_1 = __decorate([
-    ProtobufElement({})
-], ExportKeyActionProto);
-var ImportKeyActionProto = ImportKeyActionProto_1 = (function (_super) {
+var ImportKeyActionProto = (function (_super) {
     __extends(ImportKeyActionProto, _super);
     function ImportKeyActionProto() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ImportKeyActionProto_1 = ImportKeyActionProto;
+    ImportKeyActionProto.INDEX = CryptoActionProto.INDEX;
+    ImportKeyActionProto.ACTION = "crypto/subtle/importKey";
+    __decorate([
+        ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, type: "string", required: true })
+    ], ImportKeyActionProto.prototype, "format", void 0);
+    __decorate([
+        ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
+    ], ImportKeyActionProto.prototype, "keyData", void 0);
+    __decorate([
+        ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
+    ], ImportKeyActionProto.prototype, "algorithm", void 0);
+    __decorate([
+        ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, required: true, type: "bool" })
+    ], ImportKeyActionProto.prototype, "extractable", void 0);
+    __decorate([
+        ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, type: "string", repeated: true })
+    ], ImportKeyActionProto.prototype, "keyUsages", void 0);
+    ImportKeyActionProto = ImportKeyActionProto_1 = __decorate([
+        ProtobufElement({})
+    ], ImportKeyActionProto);
     return ImportKeyActionProto;
+    var ImportKeyActionProto_1;
 }(CryptoActionProto));
-ImportKeyActionProto.INDEX = CryptoActionProto.INDEX;
-ImportKeyActionProto.ACTION = "crypto/subtle/importKey";
-__decorate([
-    ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, type: "string", required: true })
-], ImportKeyActionProto.prototype, "format", void 0);
-__decorate([
-    ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, required: true, converter: ArrayBufferConverter })
-], ImportKeyActionProto.prototype, "keyData", void 0);
-__decorate([
-    ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, required: true, parser: AlgorithmProto })
-], ImportKeyActionProto.prototype, "algorithm", void 0);
-__decorate([
-    ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, required: true, type: "bool" })
-], ImportKeyActionProto.prototype, "extractable", void 0);
-__decorate([
-    ProtobufProperty({ id: ImportKeyActionProto_1.INDEX++, type: "string", repeated: true })
-], ImportKeyActionProto.prototype, "keyUsages", void 0);
-ImportKeyActionProto = ImportKeyActionProto_1 = __decorate([
-    ProtobufElement({})
-], ImportKeyActionProto);
-var DigestActionProto_1;
-var GenerateKeyActionProto_1;
-var SignActionProto_1;
-var VerifyActionProto_1;
-var DeriveBitsActionProto_1;
-var DeriveKeyActionProto_1;
-var UnwrapKeyActionProto_1;
-var WrapKeyActionProto_1;
-var ExportKeyActionProto_1;
-var ImportKeyActionProto_1;
 
 var SocketSubtleCrypto = (function (_super) {
     __extends(SocketSubtleCrypto, _super);
