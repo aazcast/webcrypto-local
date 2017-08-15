@@ -2263,7 +2263,7 @@ function authenticateA(IKa, EKa, IKb, SPKb, OPKb) {
                     DH4 = _a.sent();
                     _a.label = 5;
                 case 5:
-                    _F = new Uint8Array(32);
+                    var _F = new Uint8Array(32);
                     for (var fi=0; fi<_F.length; fi++) {
                         _F[fi] = 0xff;
                     }
@@ -2299,7 +2299,7 @@ function authenticateB(IKb, SPKb, IKa, EKa, OPKb) {
                     DH4 = _a.sent();
                     _a.label = 5;
                 case 5:
-                    _F = new Uint8Array(32);
+                    var _F = new Uint8Array(32);
                     for (var fi=0; fi<_F.length; fi++) {
                         _F[fi] = 0xff;
                     }
