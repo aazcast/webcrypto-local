@@ -1271,7 +1271,7 @@ var ECPublicKey = (function () {
     }
     ECPublicKey.create = function (publicKey) {
         return __awaiter(this, void 0, void 0, function () {
-            var res, algName, jwk, x, y, xy, _a;
+            var res, algName, spki, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -1284,13 +1284,10 @@ var ECPublicKey = (function () {
                             throw new Error("Error: Expected key type to be public but it was not.");
                         }
                         res.key = publicKey;
-                        return [4, crypto$1.subtle.exportKey("jwk", publicKey)];
+                        return [4, crypto$1.subtle.exportKey("raw", publicKey)];
                     case 1:
-                        jwk = _b.sent();
-                        x = Convert.FromBase64Url(jwk.x);
-                        y = Convert.FromBase64Url(jwk.y);
-                        xy = Convert.ToBinary(x) + Convert.ToBinary(y);
-                        res.serialized = Convert.FromBinary(xy);
+                        spki = _b.sent();
+                        res.serialized = spki;
                         _a = res;
                         return [4, res.thumbprint()];
                     case 2:
@@ -1302,21 +1299,13 @@ var ECPublicKey = (function () {
     };
     ECPublicKey.importKey = function (bytes, type) {
         return __awaiter(this, void 0, void 0, function () {
-            var x, y, jwk, usage, key, res;
+            var usage, key, res;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        x = Convert.ToBase64Url(bytes.slice(0, 32));
-                        y = Convert.ToBase64Url(bytes.slice(32));
-                        jwk = {
-                            kty: "EC",
-                            crv: Curve.NAMED_CURVE,
-                            x: x,
-                            y: y,
-                        };
                         usage = (type === "ECDSA" ? ["verify"] : []);
                         return [4, crypto$1.subtle
-                                .importKey("jwk", jwk, { name: type, namedCurve: Curve.NAMED_CURVE }, true, usage)];
+                                .importKey("raw", bytes, { name: type, namedCurve: Curve.NAMED_CURVE }, true, usage)];
                     case 1:
                         key = _a.sent();
                         return [4, ECPublicKey.create(key)];
@@ -2244,7 +2233,7 @@ var ReceivingRatchet = (function (_super) {
 
 function authenticateA(IKa, EKa, IKb, SPKb, OPKb) {
     return __awaiter(this, void 0, void 0, function () {
-        var DH1, DH2, DH3, DH4, F, KM, keys;
+        var DH1, DH2, DH3, DH4, _F, i, F, KM, keys;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4, Curve.deriveBytes(IKa.exchangeKey.privateKey, SPKb)];
@@ -2263,7 +2252,11 @@ function authenticateA(IKa, EKa, IKb, SPKb, OPKb) {
                     DH4 = _a.sent();
                     _a.label = 5;
                 case 5:
-                    F = new Uint8Array(32).map(function () { return 0xff; }).buffer;
+                    _F = new Uint8Array(32);
+                    for (i = 0; i < _F.length; i++) {
+                        _F[i] = 0xff;
+                    }
+                    F = _F.buffer;
                     KM = combine(F, DH1, DH2, DH3, DH4);
                     return [4, Secret.HKDF(KM, 1, void 0, INFO_TEXT)];
                 case 6:
@@ -2276,7 +2269,7 @@ function authenticateA(IKa, EKa, IKb, SPKb, OPKb) {
 }
 function authenticateB(IKb, SPKb, IKa, EKa, OPKb) {
     return __awaiter(this, void 0, void 0, function () {
-        var DH1, DH2, DH3, DH4, F, KM, keys;
+        var DH1, DH2, DH3, DH4, _F, i, F, KM, keys;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4, Curve.deriveBytes(SPKb.privateKey, IKa)];
@@ -2295,7 +2288,11 @@ function authenticateB(IKb, SPKb, IKa, EKa, OPKb) {
                     DH4 = _a.sent();
                     _a.label = 5;
                 case 5:
-                    F = new Uint8Array(32).map(function () { return 0xff; }).buffer;
+                    _F = new Uint8Array(32);
+                    for (i = 0; i < _F.length; i++) {
+                        _F[i] = 0xff;
+                    }
+                    F = _F.buffer;
                     KM = combine(F, DH1, DH2, DH3, DH4);
                     return [4, Secret.HKDF(KM, 1, void 0, INFO_TEXT)];
                 case 6:
