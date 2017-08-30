@@ -3263,7 +3263,7 @@ var BrowserStorage = (function () {
                     case 0:
                         if (!isFirefox()) return [3, 7];
                         _a = {};
-                        return [4, getEngine().crypto.subtle.generateKey({ name: AES_CBC.name, length: 256 }, false, ["wrapKey", "unwrapKey"])];
+                        return [4, getEngine().crypto.subtle.generateKey({ name: AES_CBC.name, length: 256 }, false, ["wrapKey", "unwrapKey", "encrypt", "decrypt"])];
                     case 1:
                         wkey = (_a.key = _d.sent(),
                             _a.iv = getEngine().crypto.getRandomValues(new Uint8Array(AES_CBC.iv)).buffer,
