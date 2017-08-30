@@ -3238,11 +3238,17 @@ var BrowserStorage = (function () {
                             return [2, null];
                         }
                         _a = json.exchangeKey;
-                        return [4, getEngine().crypto.subtle.unwrapKey("jwk", json.exchangeKey.privateKey, wkey.key, AES_CBC, ECDH, false, ["deriveKey", "deriveBits"])];
+                        return [4, getEngine().crypto.subtle.decrypt(AES_CBC, wkey.key, json.exchangeKey.privateKey)
+                                .then(function (buf) {
+                                return getEngine().crypto.subtle.importKey("jwk", JSON.parse(Convert.ToUtf8String(buf)), ECDH, false, ["deriveKey", "deriveBits"]);
+                            })];
                     case 3:
                         _a.privateKey = _c.sent();
                         _b = json.signingKey;
-                        return [4, getEngine().crypto.subtle.unwrapKey("jwk", json.signingKey.privateKey, wkey.key, AES_CBC, ECDSA, false, ["sign"])];
+                        return [4, getEngine().crypto.subtle.decrypt(AES_CBC, wkey.key, json.signingKey.privateKey)
+                                .then(function (buf) {
+                                return getEngine().crypto.subtle.importKey("jwk", JSON.parse(Convert.ToUtf8String(buf)), ECDSA, false, ["sign"]);
+                            })];
                     case 4:
                         _b.privateKey = _c.sent();
                         _c.label = 5;
