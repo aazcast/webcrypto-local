@@ -27,12 +27,19 @@ To support cross-browser work (Chrome, Firefox, Safari, Edge, IE) you can apply 
 > NOTE: Use these scripts in the same order
 
 `promise` - Optional. It's needed for IE browser only, because IE doesn't support Promise
+
 `es5-shim` - Optional. Fixes some ES5 browser differences
+
 `webcrypto-liner` - Optional. A WebCrypto polyfill that "smooths out" the rough-edges in existing User Agent implementations.
+
 `asmcrypto` - Optional. JS implementation of SHA, RSA cryptography.
+
 `elliptic` - Optional. JS implementation of EC cryptography.
+
 `protobuf` - Required. Protocol Buffers (a.k.a., protobuf) are Google's language-neutral, platform-neutral, extensible mechanism for serializing structured data
+
 `idb` - Required. This is a tiny library that mirrors IndexedDB, but replaces the weird IDBRequest objects with promises
+
 `fetch` - Optional. The fetch() function is a Promise-based mechanism for programmatically making web requests in the browser
 
 ## Examples
