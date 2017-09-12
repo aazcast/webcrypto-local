@@ -1,0 +1,17 @@
+{
+  "name": "webcrypto-socket",
+  "version": "1.0.0",
+  "description": "Some text here",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "typedoc --out ./docs index.d.ts --includeDeclarations --theme minimal --readme README.md"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
