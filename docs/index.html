@@ -915,10 +915,80 @@ img { max-width: 100%; }
 	<div class="content-wrap">
 		<div class="tsd-panel tsd-typography">
 			<h1 id="webcrypto-socket">webcrypto-socket</h1>
-			<p>Some text here</p>
+			<p>Webcrypto socket module implements <a href="https://peculiarventures.github.io/webcrypto-local/docs/interfaces/index_d_.crypto.html">Crypto</a> interface and uses <a href="https://fortifyapp.com">Fortify</a> application for crypto implementation.</p>
+			<h2 id="install">Install</h2>
+			<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://peculiarventures.github.io/webcrypto-local/webcrypto-socket.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+			<h2 id="using">Using</h2>
+			<p>To support cross-browser work (Chrome, Firefox, Safari, Edge, IE) you can apply some scripts to your HTML page</p>
+			<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://peculiarventures.github.io/pv-webcrypto-tests/src/promise.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://peculiarventures.github.io/pv-webcrypto-tests/src/es5-shim.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://peculiarventures.github.io/pv-webcrypto-tests/src/webcrypto-liner.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://peculiarventures.github.io/pv-webcrypto-tests/src/asmcrypto.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://peculiarventures.github.io/pv-webcrypto-tests/src/elliptic.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://cdn.rawgit.com/dcodeIO/protobuf.js/6.8.0/dist/protobuf.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://cdn.rawgit.com/jakearchibald/idb/97e4e878/lib/idb.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://min.gitcdn.link/repo/undoZen/fetch/master/fetch.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://peculiarventures.github.io/webcrypto-local/webcrypto-socket.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+			<blockquote>
+				<p>NOTE: Use these scripts in the same order</p>
+			</blockquote>
+			<p><code>promise</code> - Optional. It&#39;s needed for IE browser only, because IE doesn&#39;t support Promise
+				<code>es5-shim</code> - Optional. Fixes some ES5 browser differences
+				<code>webcrypto-liner</code> - Optional. A WebCrypto polyfill that &quot;smooths out&quot; the rough-edges in existing User Agent implementations.
+				<code>asmcrypto</code> - Optional. JS implementation of SHA, RSA cryptography.
+				<code>elliptic</code> - Optional. JS implementation of EC cryptography.
+				<code>protobuf</code> - Required. Protocol Buffers (a.k.a., protobuf) are Google&#39;s language-neutral, platform-neutral, extensible mechanism for serializing structured data
+				<code>idb</code> - Required. This is a tiny library that mirrors IndexedDB, but replaces the weird IDBRequest objects with promises
+			<code>fetch</code> - Optional. The fetch() function is a Promise-based mechanism for programmatically making web requests in the browser</p>
 			<h2 id="examples">Examples</h2>
-			<h3 id="example-1">Example 1</h3>
-			<pre><code class="lang-js"><span class="hljs-keyword">const</span> sp = <span class="hljs-keyword">new</span> WebcryptoSocket.SocketProvider();
+			<h3 id="connect-to-fortify-app">Connect to Fortify app</h3>
+			<pre><code class="lang-js"><span class="hljs-keyword">var</span> ws = <span class="hljs-keyword">new</span> WebcryptoSocket.SocketProvider();
+
+ws.connect(<span class="hljs-string">"127.0.0.1:31337"</span>) <span class="hljs-comment">// Fixed URI for Fortify application</span>
+    .on(<span class="hljs-string">"error"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
+        <span class="hljs-built_in">console</span>.error(e);
+    })
+    .on(<span class="hljs-string">"listening"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
+        <span class="hljs-comment">// Check if end-to-end session is approved</span>
+        ws.isLoggedIn()
+            .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">ok</span>) </span>{
+                <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Session approved:"</span>, ok);
+                <span class="hljs-keyword">if</span> (!ok) {
+                    <span class="hljs-comment">// ask to approve session</span>
+                    <span class="hljs-keyword">return</span> ws.login();
+                }
+            })
+            .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+
+                <span class="hljs-comment">// You code here</span>
+
+            }, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                alert(<span class="hljs-string">"PIN is not approved"</span>);
+            })
+    })
+    .on(<span class="hljs-string">"close"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        isOpen = <span class="hljs-literal">false</span>;
+    });
+</code></pre>
+			<h3 id="to-get-list-of-providers-and-select-first-of-them">To get list of providers and select first of them</h3>
+			<pre><code class="lang-js">ws.info()
+    .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">info</span>) </span>{
+        <span class="hljs-comment">// print info about each provider</span>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i &lt; info.providers.length; i++) {
+            <span class="hljs-keyword">var</span> provider = info.providers[i];
+            <span class="hljs-built_in">console</span>.log(provider);
+        }
+
+        <span class="hljs-comment">// get first provider</span>
+        <span class="hljs-keyword">return</span> ws.getCrypto(provider.id);
+    })
+    .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">crypto</span>)</span>{
+
+        <span class="hljs-comment">// Your code here</span>
+
+    });
 </code></pre>
 		</div>
 		<div style="position:relative;"><a name="typedoc-main-index" class="tsd-anchor"></a></div>
