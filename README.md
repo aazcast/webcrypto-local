@@ -1,6 +1,6 @@
 # webcrypto-socket
 
-Webcrypto socket module implements [Crypto](https://peculiarventures.github.io/webcrypto-local/docs/interfaces/index_d_.crypto.html) interface and uses [Fortify](https://fortifyapp.com) application for crypto implementation.
+Webcrypto socket module implements [Crypto](https://peculiarventures.github.io/webcrypto-local/docs/classes/index_d_.webcryptosocket.socketcrypto.html) interface and uses [Fortify](https://fortifyapp.com) application for crypto implementation.
 
 ## Install
 
