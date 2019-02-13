@@ -7152,6 +7152,7 @@
         });
         SocketProvider.prototype.connect = function (address) {
             var _this = this;
+            this.client = new Client();
             this.client.connect(address)
                 .on("error", function (e) {
                 _this.emit("error", e.error);
